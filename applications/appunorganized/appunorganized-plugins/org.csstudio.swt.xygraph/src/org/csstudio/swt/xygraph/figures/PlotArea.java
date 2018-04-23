@@ -298,7 +298,7 @@ public class PlotArea extends Figure {
      */
     private void zoomInOut(final boolean horizontally,
             final boolean vertically, final double factor) {
-        disableTimebasedScrolling();
+        xyGraph.getEventManager().setScrollingDisabled(false);
         if (horizontally)
             for (Axis axis : xyGraph.getXAxisList()) {
                 final double center = axis.getPositionValue(start.x, false);
@@ -309,27 +309,6 @@ public class PlotArea extends Figure {
                 final double center = axis.getPositionValue(start.y, false);
                 axis.zoomInOut(center, factor);
             }
-    }
-
-    /** _If_ this is a time-based plot, disabled scrolling
-     *
-     *  <p>Checks if there's any time-based X axis.
-     *  If so, disable scrolling.
-     *
-     *  <p>For plots that don't have a time axis,
-     *  scrolling doesn't really apply but it is used
-     *  internally to allow display updates, which should
-     *  continue for a non-time-based plot.
-     */
-    private void disableTimebasedScrolling()
-    {
-       for (Axis axis : xyGraph.getXAxisList())
-           if (axis.isDateEnabled())
-           {
-               xyGraph.getEventManager().setScrollingDisabled(false);
-               return;
-           }
-       // No time axis found, leave scrolling untouched
     }
 
     /**
@@ -483,7 +462,7 @@ public class PlotArea extends Figure {
                     axis.setRange(t1, t2, true);
                     axis.setScrollingDisabled(true);
                 }
-                disableTimebasedScrolling();
+                xyGraph.getEventManager().setScrollingDisabled(false);
                 break;
             case HORIZONTAL_ZOOM:
                 for (Axis axis : xyGraph.getXAxisList()) {
@@ -493,7 +472,7 @@ public class PlotArea extends Figure {
                     axis.setRange(t1, t2, true);
                     axis.setScrollingDisabled(true);
                 }
-                disableTimebasedScrolling();
+                xyGraph.getEventManager().setScrollingDisabled(false);
                 break;
             case VERTICAL_ZOOM:
                 for (Axis axis : xyGraph.getYAxisList()) {
@@ -503,7 +482,7 @@ public class PlotArea extends Figure {
                     axis.setRange(t1, t2, true);
                     axis.setScrollingDisabled(true);
                 }
-                disableTimebasedScrolling();
+                xyGraph.getEventManager().setScrollingDisabled(false);
                 break;
             case PANNING:
                 pan();
@@ -532,7 +511,7 @@ public class PlotArea extends Figure {
 
         /** Pan axis according to start/end from mouse listener */
         private void pan() {
-            disableTimebasedScrolling();
+            xyGraph.getEventManager().setScrollingDisabled(false);
             List<Axis> axes = xyGraph.getXAxisList();
             for (int i = 0; i < axes.size(); ++i) {
                 final Axis axis = axes.get(i);

@@ -235,12 +235,6 @@ public final class MediaService {
                 if ((i = line.indexOf('=')) != -1) {
                     String name = line.substring(0, i).trim();
                     try {
-                        // Display builder allows both R, G, B
-                        //    NAME=255, 255, 255
-                        // and
-                        //    NAME=255, 255, 255, 255
-                        // with optional alpha value.
-                        // This call handles both by ignoring the alpha value
                         RGB color = StringConverter.asRGB(line.substring(i + 1).trim());
 
                         colorMap.put(name, new OPIColor(name, color, true));
@@ -281,7 +275,7 @@ public final class MediaService {
                     continue;
                 int i;
                 if ((i = line.indexOf('=')) != -1) {
-                    boolean isPixels = PreferencesHelper.isDefaultFontSizeInPixels();
+                    boolean isPixels = false;
                     String name = line.substring(0, i).trim();
                     String trimmedName = name;
                     if (name.contains("(")) //$NON-NLS-1$
@@ -293,15 +287,9 @@ public final class MediaService {
                             isPixels = true;
                             trimmedLine = trimmedLine.substring(0, trimmedLine.length()-2);
                         } else if (line.endsWith("pt")) { //$NON-NLS-1$
-                            isPixels = false;
                             trimmedLine = trimmedLine.substring(0, trimmedLine.length()-2);
                         }
 
-                        // BOY only handles "Liberation Sans-regular-12",
-                        // while Display Builder allows additional spaces as in
-                        // "Liberation Sans - regular - 12".
-                        // Patch line to be upwards-compatible
-                        trimmedLine = trimmedLine.replaceAll(" +- +", "-"); //$NON-NLS-1$ //$NON-NLS-2$
                         FontData fontdata = StringConverter.asFontData(trimmedLine);
                         if (fontdata.getName().equals("SystemDefault")) //$NON-NLS-1$
                             fontdata.setName(systemFontName);

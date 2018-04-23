@@ -413,10 +413,7 @@ public class Controller
             @Override
             public void changedTitle()
             {
-                Optional<String> title = model.getTitle();
-                if (title.isPresent())
-                    title = Optional.of(model.resolveMacros(title.get()));
-                plot.getPlot().setTitle(title);
+                plot.getPlot().setTitle(model.getTitle());
             }
 
             @Override
@@ -594,10 +591,7 @@ public class Controller
         plot.getPlot().setLabelFont(model.getLabelFont());
         plot.getPlot().setScaleFont(model.getScaleFont());
         plot.getPlot().setLegendFont(model.getLegendFont());
-        Optional<String> title = model.getTitle();
-        if (title.isPresent())
-            title = Optional.of(model.resolveMacros(title.get()));
-        plot.getPlot().setTitle(title);
+        plot.getPlot().setTitle(model.getTitle());
         plot.getPlot().setScrollStep(model.getScrollStep());
 
         final List<Trace<Instant>> traces = new ArrayList<>();

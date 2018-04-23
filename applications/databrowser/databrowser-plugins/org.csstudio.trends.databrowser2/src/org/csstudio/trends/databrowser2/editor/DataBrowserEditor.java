@@ -252,9 +252,7 @@ public class DataBrowserEditor extends EditorPart
 
             @Override
             public void changedItemLook(final ModelItem item)
-            {
-                site.getShell().getDisplay().asyncExec(() -> setDirty(true));
-            }
+            {   setDirty(true);   }
 
             @Override
             public void changedItemDataConfig(PVItem item)

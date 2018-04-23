@@ -19,6 +19,8 @@ import org.csstudio.swt.xygraph.undo.IOperationsManagerListener;
 import org.csstudio.swt.xygraph.undo.OperationsManager;
 import org.csstudio.swt.xygraph.undo.RemoveAnnotationCommand;
 import org.csstudio.swt.xygraph.undo.ZoomType;
+import org.csstudio.swt.xygraph.util.EventManager;
+import org.csstudio.swt.xygraph.util.IEventManagerListener;
 import org.csstudio.swt.xygraph.util.SingleSourceHelper;
 import org.csstudio.swt.xygraph.util.XYGraphMediaFactory;
 import org.csstudio.ui.util.ColorConstants;
@@ -70,7 +72,6 @@ public class XYGraphToolbar extends Figure {
         configButton.setToolTip(new Label("Configure Settings..."));
         addButton(configButton);
         configButton.addActionListener(new ActionListener(){
-            @Override
             public void actionPerformed(ActionEvent event) {
                 XYGraphConfigDialog dialog = new XYGraphConfigDialog(
                         Display.getCurrent().getActiveShell(), xyGraph);
@@ -82,7 +83,6 @@ public class XYGraphToolbar extends Figure {
         addAnnotationButton.setToolTip(new Label("Add Annotation..."));
         addButton(addAnnotationButton);
         addAnnotationButton.addActionListener(new ActionListener(){
-            @Override
             public void actionPerformed(ActionEvent event) {
                 AddAnnotationDialog dialog = new AddAnnotationDialog(
                         Display.getCurrent().getActiveShell(), xyGraph);
@@ -98,7 +98,6 @@ public class XYGraphToolbar extends Figure {
         delAnnotationButton.setToolTip(new Label("Remove Annotation..."));
         addButton(delAnnotationButton);
         delAnnotationButton.addActionListener(new ActionListener(){
-            @Override
             public void actionPerformed(ActionEvent event) {
                 RemoveAnnotationDialog dialog = new RemoveAnnotationDialog(
                         Display.getCurrent().getActiveShell(), xyGraph);
@@ -117,7 +116,6 @@ public class XYGraphToolbar extends Figure {
             staggerButton.setToolTip(new Label("Stagger axes so they don't overlap"));
             addButton(staggerButton);
             staggerButton.addActionListener(new ActionListener(){
-                @Override
                 public void actionPerformed(ActionEvent event) {
                     xyGraph.performStagger();
                 }
@@ -129,7 +127,6 @@ public class XYGraphToolbar extends Figure {
             autoScaleButton.setToolTip(new Label("Perform Auto Scale"));
             addButton(autoScaleButton);
             autoScaleButton.addActionListener(new ActionListener(){
-                @Override
                 public void actionPerformed(ActionEvent event) {
                     xyGraph.performAutoScale();
                 }
@@ -143,7 +140,6 @@ public class XYGraphToolbar extends Figure {
             valueLabelsButton.setOpaque(true);
             final ToggleModel valueLabelsModel = new ToggleModel();
             valueLabelsModel.addChangeListener(new ChangeListener(){
-                @Override
                 public void handleStateChanged(ChangeEvent event) {
                     if(event.getPropertyName().equals("selected")){
                         xyGraph.setShowValueLabels(valueLabelsButton.isSelected());
@@ -152,14 +148,12 @@ public class XYGraphToolbar extends Figure {
                 }
             });
             xyGraph.addPropertyChangeListener("showValueLabels", new PropertyChangeListener() {
-                @Override
                 public void propertyChange(PropertyChangeEvent evt) {
                     xyGraph.setShowAxisTrace(xyGraph.isShowValueLabels());
                     valueLabelsModel.setSelected(xyGraph.isShowValueLabels());
                 }
             });
             xyGraph.addPropertyChangeListener("showAxisTrace", new PropertyChangeListener() {
-                @Override
                 public void propertyChange(PropertyChangeEvent evt) {
                     xyGraph.setShowValueLabels(xyGraph.isShowAxisTrace());
                     valueLabelsModel.setSelected(xyGraph.isShowAxisTrace());
@@ -175,7 +169,6 @@ public class XYGraphToolbar extends Figure {
             valueLabelsButton.setOpaque(true);
             final ToggleModel valueLabelsModel = new ToggleModel();
             valueLabelsModel.addChangeListener(new ChangeListener(){
-                @Override
                 public void handleStateChanged(ChangeEvent event) {
                     if(event.getPropertyName().equals("selected")){
                         xyGraph.setShowValueLabels(valueLabelsButton.isSelected());
@@ -183,7 +176,6 @@ public class XYGraphToolbar extends Figure {
                 }
             });
             xyGraph.addPropertyChangeListener("showValueLabels", new PropertyChangeListener() {
-                @Override
                 public void propertyChange(PropertyChangeEvent evt) {
                     valueLabelsModel.setSelected(xyGraph.isShowValueLabels());
                 }
@@ -198,7 +190,6 @@ public class XYGraphToolbar extends Figure {
             axisTraceButton.setOpaque(true);
             final ToggleModel axisTraceModel = new ToggleModel();
             axisTraceModel.addChangeListener(new ChangeListener(){
-                @Override
                 public void handleStateChanged(ChangeEvent event) {
                     if(event.getPropertyName().equals("selected")){
                         xyGraph.setShowAxisTrace(axisTraceButton.isSelected());
@@ -206,7 +197,6 @@ public class XYGraphToolbar extends Figure {
                 }
             });
             xyGraph.addPropertyChangeListener("showAxisTrace", new PropertyChangeListener() {
-                @Override
                 public void propertyChange(PropertyChangeEvent evt) {
                     axisTraceModel.setSelected(xyGraph.isShowAxisTrace());
                 }
@@ -232,31 +222,34 @@ public class XYGraphToolbar extends Figure {
         scrollingButton.setOpaque(true);
         scrollingButton.setSelected(!xyGraph.isScrollingDisabled());
 
-
         final ToggleModel scrollingButtonModel = new ToggleModel();
         scrollingButtonModel.setSelected(!xyGraph.isScrollingDisabled());
         scrollingButton.setModel(scrollingButtonModel);
         addButton(scrollingButton);
         scrollingButtonModel.addChangeListener(new ChangeListener(){
-            @Override
             public void handleStateChanged(ChangeEvent event) {
                 xyGraph.setScrollingDisabled(!scrollingButton.isSelected());
                 scrollingButton.switchImage(scrollingButton.isSelected());
-
                 if(scrollingButton.isSelected()) {
                     scrollingButton.setToolTip(new Label("Disable Scrolling"));
                 } else {
                     scrollingButton.setToolTip(new Label("Enable Scrolling"));
                 }
-
+                xyGraph.getEventManager().fireScrollingChanged(!scrollingButton.isSelected());
             }
         });
 
-        xyGraph.addPropertyChangeListener(XYGraph.SCROLLING_EXTTRIGGERED_PROPERTY, new PropertyChangeListener() {
+        xyGraph.getEventManager().addListener(new IEventManagerListener(){
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getPropertyName().equals(XYGraph.SCROLLING_EXTTRIGGERED_PROPERTY))
-                    scrollingButtonModel.setSelected((boolean)evt.getNewValue());
+            public void dataChanged(EventManager manager) {
+                scrollingButton.switchImage(manager.isScrollingDisabled());
+                scrollingButton.setSelected(manager.isScrollingDisabled());
+                scrollingButtonModel.setSelected(manager.isScrollingDisabled());
+                if(manager.isScrollingDisabled()) {
+                    scrollingButton.setToolTip(new Label("Disable Scrolling"));
+                } else {
+                    scrollingButton.setToolTip(new Label("Enable Scrolling"));
+                }
             }
         });
 
@@ -281,7 +274,6 @@ public class XYGraphToolbar extends Figure {
         snapShotButton.setToolTip(new Label("Save Snapshot to PNG file"));
         addButton(snapShotButton);
         snapShotButton.addActionListener(new ActionListener(){
-            @Override
             public void actionPerformed(ActionEvent event) {
                  // Have valid name, so get image
                 ImageLoader loader = new ImageLoader();
@@ -310,13 +302,11 @@ public class XYGraphToolbar extends Figure {
         undoButton.setEnabled(false);
         addButton(undoButton);
         undoButton.addActionListener(new ActionListener(){
-            @Override
             public void actionPerformed(ActionEvent event) {
                 xyGraph.getOperationsManager().undo();
             }
         });
         xyGraph.getOperationsManager().addListener(new IOperationsManagerListener(){
-            @Override
             public void operationsHistoryChanged(OperationsManager manager) {
                 if(manager.getUndoCommandsSize() > 0){
                     undoButton.setEnabled(true);
@@ -338,13 +328,11 @@ public class XYGraphToolbar extends Figure {
         redoButton.setEnabled(false);
         addButton(redoButton);
         redoButton.addActionListener(new ActionListener(){
-            @Override
             public void actionPerformed(ActionEvent event) {
                 xyGraph.getOperationsManager().redo();
             }
         });
         xyGraph.getOperationsManager().addListener(new IOperationsManagerListener(){
-            @Override
             public void operationsHistoryChanged(OperationsManager manager) {
                 if(manager.getRedoCommandsSize() > 0){
                     redoButton.setEnabled(true);
@@ -375,7 +363,6 @@ public class XYGraphToolbar extends Figure {
             button.setOpaque(true);
             final ToggleModel model = new ToggleModel();
             model.addChangeListener(new ChangeListener(){
-                @Override
                 public void handleStateChanged(ChangeEvent event) {
                     if(event.getPropertyName().equals("selected") &&
                             button.isSelected()){

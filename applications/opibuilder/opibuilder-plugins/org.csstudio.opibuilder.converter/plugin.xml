@@ -45,17 +45,5 @@
             primary="true">
       </toc>
    </extension>
-   <extension
-         id="edl"
-         point="org.eclipse.core.runtime.applications">
-      <application
-            cardinality="singleton-global"
-            thread="main"
-            visible="true">
-         <run
-               class="org.csstudio.opibuilder.converter.ConverterApplication">
-         </run>
-      </application>
-   </extension>
 
 </plugin>

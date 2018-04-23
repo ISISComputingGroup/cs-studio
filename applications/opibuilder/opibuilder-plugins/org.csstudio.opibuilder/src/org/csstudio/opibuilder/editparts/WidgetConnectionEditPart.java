@@ -180,59 +180,24 @@ public class WidgetConnectionEditPart extends AbstractConnectionEditPart {
                     .addPropertyChangeListener(new PropertyChangeListener() {
                         @Override
                         public void propertyChange(PropertyChangeEvent evt) {
-                            getConnectionFigure().setLineJumpAdd(getWidgetModel().getLineJumpAdd());
-
-                            Runnable runnable = new Runnable() {
-                                @Override
-                                public void run() {
-                                    getConnectionFigure().repaint();
-                                }
-                            };
-                            WidgetIgnorableUITask task = new WidgetIgnorableUITask(
-                                    getWidgetModel().getProperty(ConnectionModel.PROP_LINE_JUMP_ADD), runnable,
-                                    getViewer().getControl().getDisplay());
-                            GUIRefreshThread.getInstance(getExecutionMode() == ExecutionMode.EDIT_MODE)
-                                    .addIgnorableTask(task);
-
+                            getConnectionFigure().setLineJumpAdd(
+                                    getWidgetModel().getLineJumpAdd());
                         }
                     });
             getWidgetModel().getProperty(ConnectionModel.PROP_LINE_JUMP_SIZE)
                     .addPropertyChangeListener(new PropertyChangeListener() {
                         @Override
                         public void propertyChange(PropertyChangeEvent evt) {
-                            getConnectionFigure().setLineJumpSize(getWidgetModel().getLineJumpSize());
-
-                            Runnable runnable = new Runnable() {
-                                @Override
-                                public void run() {
-                                    getConnectionFigure().repaint();
-                                }
-                            };
-                            WidgetIgnorableUITask task = new WidgetIgnorableUITask(
-                                    getWidgetModel().getProperty(ConnectionModel.PROP_LINE_JUMP_SIZE), runnable,
-                                    getViewer().getControl().getDisplay());
-                            GUIRefreshThread.getInstance(getExecutionMode() == ExecutionMode.EDIT_MODE)
-                                    .addIgnorableTask(task);
-
+                            getConnectionFigure().setLineJumpSize(
+                                    getWidgetModel().getLineJumpSize());
                         }
                     });
             getWidgetModel().getProperty(ConnectionModel.PROP_LINE_JUMP_STYLE)
                     .addPropertyChangeListener(new PropertyChangeListener() {
                         @Override
                         public void propertyChange(PropertyChangeEvent evt) {
-                            getConnectionFigure().setLineJumpStyle(getWidgetModel().getLineJumpStyle());
-
-                            Runnable runnable = new Runnable() {
-                                @Override
-                                public void run() {
-                                    getConnectionFigure().repaint();
-                                }
-                            };
-                            WidgetIgnorableUITask task = new WidgetIgnorableUITask(
-                                    getWidgetModel().getProperty(ConnectionModel.PROP_LINE_JUMP_SIZE), runnable,
-                                    getViewer().getControl().getDisplay());
-                            GUIRefreshThread.getInstance(getExecutionMode() == ExecutionMode.EDIT_MODE)
-                                    .addIgnorableTask(task);
+                            getConnectionFigure().setLineJumpStyle(
+                                    getWidgetModel().getLineJumpStyle());
                         }
                     });
             getWidgetModel().getProperty(ConnectionModel.PROP_IS_LOADED_FROM_LINKING_CONTAINER)

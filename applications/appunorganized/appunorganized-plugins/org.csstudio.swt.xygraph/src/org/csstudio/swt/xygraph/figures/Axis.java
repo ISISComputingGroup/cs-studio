@@ -780,6 +780,7 @@ public class Axis extends LinearScale{
         }
         setScrollingDisabled(false);
         setRange(t1, t2);
+        xyGraph.getEventManager().fireSetFixedRange(t1, t2);
         setScrollingDisabled(true);
     }
 
@@ -807,6 +808,7 @@ public class Axis extends LinearScale{
         }
         setScrollingDisabled(false);
         setRange(t1, t2, true);
+        xyGraph.getEventManager().fireSetFixedRange(t1, t2);
         setScrollingDisabled(true);
     }
 
@@ -861,7 +863,6 @@ public class Axis extends LinearScale{
     {
         private SaveStateCommand command;
 
-        @Override
         public void mousePressed(final MouseEvent me)
         {
             // Only react to 'main' mouse button, only react to 'real' zoom
@@ -903,7 +904,6 @@ public class Axis extends LinearScale{
                 // Start timer that will zoom while mouse button is pressed
                 Display.getCurrent().timerExec(ZOOM_SPEED, new Runnable()
                 {
-                    @Override
                     public void run()
                     {
                         if (!armed)
@@ -922,7 +922,6 @@ public class Axis extends LinearScale{
             me.consume();
         }
 
-        @Override
         public void mouseDoubleClicked(final MouseEvent me) { /* Ignored */ }
 
         @Override
@@ -972,7 +971,6 @@ public class Axis extends LinearScale{
             }
         }
 
-        @Override
         public void mouseReleased(final MouseEvent me)
         {
             if (! armed)

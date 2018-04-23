@@ -13,7 +13,6 @@ import java.util.Map.Entry;
 import org.csstudio.opibuilder.editparts.AbstractBaseEditPart;
 import org.csstudio.simplepv.IPV;
 import org.csstudio.simplepv.VTypeHelper;
-import org.diirt.vtype.Display;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
@@ -29,6 +28,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
+import org.diirt.vtype.Display;
 
 /**Show details information of widget's primary PV.
  * @author Xihui Chen
@@ -119,10 +119,6 @@ public class ShowPVInfoAction implements IObjectActionDelegate {
                 sb.append(displayInfo.getUnits());
                 sb.append("\nPrecision: ");
                 sb.append(displayInfo.getFormat().getMaximumFractionDigits());
-                sb.append("\nControl_Low: ");
-                sb.append(displayInfo.getLowerCtrlLimit());
-                sb.append("\nControl_High :");
-                sb.append(displayInfo.getUpperCtrlLimit());
                 sb.append("\nDisplay_Low: ");
                 sb.append(displayInfo.getLowerDisplayLimit());
                 sb.append("\nDisplay_High :");
@@ -144,7 +140,6 @@ public class ShowPVInfoAction implements IObjectActionDelegate {
     }
 
 
-    @Override
     public void selectionChanged(IAction action, ISelection selection) {
         if (selection instanceof IStructuredSelection) {
             this.selection = (IStructuredSelection) selection;

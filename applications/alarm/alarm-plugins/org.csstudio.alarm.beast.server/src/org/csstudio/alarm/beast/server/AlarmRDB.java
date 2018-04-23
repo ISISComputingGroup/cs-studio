@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2010-2018 Oak Ridge National Laboratory.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2010 Oak Ridge National Laboratory.
+ *  All rights reserved. This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License v1.0
+ *  which accompanies this distribution, and is available at
+ *  http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
 package org.csstudio.alarm.beast.server;
-
-import static org.csstudio.alarm.beast.server.Activator.logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,6 +20,7 @@ import java.util.logging.Level;
 import org.csstudio.alarm.beast.SQL;
 import org.csstudio.alarm.beast.SeverityLevel;
 import org.csstudio.alarm.beast.TimestampHelper;
+import org.csstudio.alarm.beast.TreeItem;
 import org.csstudio.alarm.beast.server.AlarmServer.Update;
 import org.csstudio.platform.utility.rdb.RDBUtil;
 
@@ -33,9 +32,6 @@ import org.csstudio.platform.utility.rdb.RDBUtil;
 @SuppressWarnings("nls")
 public class AlarmRDB
 {
-    /** Automated action prefix for severity PV */
-    private static final String SEVRPV = "sevrpv:";
-
     /** Alarm Server */
     final private AlarmServer server;
 
@@ -88,7 +84,7 @@ public class AlarmRDB
      *  @return Root element of the alarm tree hierarchy
      *  @throws Exception on error
      */
-    public ServerTreeItem readConfiguration() throws Exception
+    public TreeItem readConfiguration() throws Exception
     {
         final Connection conn = rdb.getConnection();
         // Disabling the auto-reconnect is about 15% faster, and we don't
@@ -99,7 +95,7 @@ public class AlarmRDB
             conn.prepareStatement(sql.sel_configuration_by_name);
 
         // Get root element
-        final ServerTreeItem root;
+        final TreeItem root;
         try
         {
             statement.setString(1, root_name);
@@ -108,7 +104,7 @@ public class AlarmRDB
                 throw new Exception("Unknown alarm tree root " + root_name);
             final int id = result.getInt(1);
             result.close();
-            root = new ServerTreeItem(null, root_name, id, null);
+            root = new TreeItem(null, root_name, id);
         }
         finally
         {
@@ -152,10 +148,9 @@ public class AlarmRDB
      *  @param sel_items_by_parent Prepared statement for fetching child elements
      *  @throws Exception on error
      */
-    private void readChildren(final ServerTreeItem parent, final PreparedStatement sel_items_by_parent) throws Exception
+    private void readChildren(final TreeItem parent, final PreparedStatement sel_items_by_parent) throws Exception
     {
-        final PreparedStatement sel_actions = connection.prepareStatement(sql.sel_auto_actions_by_id);
-        final List<ServerTreeItem> recurse_items = new ArrayList<>();
+        final List<TreeItem> recurse_items = new ArrayList<TreeItem>();
 
         sel_items_by_parent.setInt(1, parent.getID());
         final ResultSet result = sel_items_by_parent.executeQuery();
@@ -175,29 +170,7 @@ public class AlarmRDB
                 final int pv_id = result.getInt(3);
                 if (result.wasNull())
                 {
-                    // Check automated action 'sevrpv:' ...
-                    String severity_pv = null;
-                    sel_actions.setInt(1, id);
-                    try
-                    (
-                        final ResultSet act_res = sel_actions.executeQuery();
-                    )
-                    {
-                        while (act_res.next())
-                        {
-                            final String action = act_res.getString(2);
-                            if (action.startsWith(SEVRPV))
-                            {
-                                final String pv_name = action.substring(SEVRPV.length());
-                                if (severity_pv != null)
-                                    logger.log(Level.WARNING, "Multiple severity PVs for '" + name + "', '" +
-                                               severity_pv + "' as well as '" + pv_name + "'");
-                                severity_pv = pv_name;
-                            }
-                        }
-                    }
-
-                    final ServerTreeItem child = new ServerTreeItem(parent, name, id, severity_pv);
+                    final TreeItem child = new TreeItem(parent, name, id);
                     recurse_items.add(child);
                 }
                 else
@@ -265,13 +238,12 @@ public class AlarmRDB
         finally
         {
             result.close();
-            sel_actions.close();
         }
 
         // Recurse to children
         // Cannot do that inside the above while() because that would reuse
         // the statement of the current ResultSet
-        for (ServerTreeItem child : recurse_items)
+        for (TreeItem child : recurse_items)
             readChildren(child, sel_items_by_parent);
     }
 

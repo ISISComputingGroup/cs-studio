@@ -41,8 +41,7 @@ public class NagTimerUnitTest implements NagTimerHandler
     @Test(timeout=8000)
     public void testNagTimer() throws Exception
     {
-        final long period = 1000;
-        final NagTimer nag_timer = new NagTimer(period, this);
+        final NagTimer nag_timer = new NagTimer(1000, this);
         nag_timer.start();
         BenchmarkTimer t = new BenchmarkTimer();
 
@@ -52,22 +51,19 @@ public class NagTimerUnitTest implements NagTimerHandler
             assertEquals(0, nags);
 
             // Expect nag after one second
-            // To be tolerant, wait up to 3 times that long
-            wait(3 * period);
+            wait(1100);
             assertEquals(1, nags);
         }
         t.stop();
         System.out.println("Time: " + t);
-
-        if (Math.abs(t.getSeconds() - 1.0) > 0.1)
-            System.out.println("WARNING: Expected nag after 1 seconds");
+        assertEquals(1.0, t.getSeconds(), 0.1);
 
         // No more if we keep resetting
-        Thread.sleep(period/2);
+        Thread.sleep(500);
         nag_timer.reset();
-        Thread.sleep(period/2);
+        Thread.sleep(500);
         nag_timer.reset();
-        Thread.sleep(period/2);
+        Thread.sleep(500);
         nag_timer.reset();
 
         // But then time out again
@@ -78,29 +74,27 @@ public class NagTimerUnitTest implements NagTimerHandler
             assertEquals(1, nags);
 
             // Expect nag after one second
-            wait(3 * period);
+            wait(1100);
             assertEquals(2, nags);
         }
         t.stop();
         System.out.println("Time: " + t);
-        if (Math.abs(t.getSeconds() - 1.0) > 0.1)
-            System.out.println("WARNING: Expected nag after 1 seconds");
+        assertEquals(1.0, t.getSeconds(), 0.1);
 
         // .. and again
         t.start();
         synchronized (this)
         {
-            wait(3 * period);
+            wait(1100);
             assertEquals(3, nags);
         }
         t.stop();
         System.out.println("Time: " + t);
-        if (Math.abs(t.getSeconds() - 1.0) > 0.1)
-            System.out.println("WARNING: Expected nag after 1 seconds");
+        assertEquals(1.0, t.getSeconds(), 0.1);
 
         // Clear all alarms
         active = 0;
-        Thread.sleep(period);
+        Thread.sleep(1100);
         synchronized (this)
         {   // Should not see another
             assertEquals(3, nags);
@@ -108,7 +102,7 @@ public class NagTimerUnitTest implements NagTimerHandler
 
         // and then again have alarms
         active = 1;
-        Thread.sleep(period);
+        Thread.sleep(1100);
         synchronized (this)
         {   // Should have received another
             assertEquals(4, nags);

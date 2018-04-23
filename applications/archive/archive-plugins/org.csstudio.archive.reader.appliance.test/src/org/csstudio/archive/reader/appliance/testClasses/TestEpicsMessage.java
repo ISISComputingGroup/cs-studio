@@ -1,5 +1,6 @@
 package org.csstudio.archive.reader.appliance.testClasses;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 
@@ -79,7 +80,7 @@ public class TestEpicsMessage extends EpicsMessage{
      * @see org.epics.archiverappliance.retrieval.client.EpicsMessage#getNumberAt(int)
      */
     @Override
-    public Number getNumberAt(int index) {
+    public Number getNumberAt(int index) throws IOException {
         if (arrayValue != null) {
             return arrayValue[index];
         }
@@ -90,7 +91,7 @@ public class TestEpicsMessage extends EpicsMessage{
      * @see org.epics.archiverappliance.retrieval.client.EpicsMessage#getNumberValue()
      */
     @Override
-    public Number getNumberValue() {
+    public Number getNumberValue() throws IOException {
         if (arrayValue != null && arrayValue.length > 0) {
             return arrayValue[0];
         }
