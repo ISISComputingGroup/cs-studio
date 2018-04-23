@@ -45,9 +45,6 @@ import org.eclipse.swt.widgets.Display;
  */
 public class XYGraph extends Figure {
 
-    public static final String SCROLLING_PROPERTY = "scrolling";
-    public static final String SCROLLING_EXTTRIGGERED_PROPERTY = "scrolling_extrigger"; //we need this, so we know when the change is not fired from button press.
-
     public void fireConfigChanged() {
         firePropertyChange("config", null, this);
     }
@@ -318,21 +315,14 @@ public class XYGraph extends Figure {
 
 
     /**
-     * @param zoomType
-     *            the zoomType to set
+     * @param zoomType the zoomType to set
      */
     public void setZoomType(ZoomType zoomType) {
-
-        // on zooming we disable the scrolling and notify the toolbar buttons
-        if (!zoomType.equals(ZoomType.NONE)) {
-            firePropertyChange(SCROLLING_EXTTRIGGERED_PROPERTY, null, false);
-        }
-
         this.zoomType = zoomType;
         plotArea.setZoomType(zoomType);
-        for (Axis axis : xAxisList)
+        for(Axis axis : xAxisList)
             axis.setZoomType(zoomType);
-        for (Axis axis : yAxisList)
+        for(Axis axis : yAxisList)
             axis.setZoomType(zoomType);
     }
 
@@ -739,9 +729,6 @@ public class XYGraph extends Figure {
     }
 
     public void setScrollingDisabled(boolean scrollingDisabled) {
-        if (this.scrollingDisabled != scrollingDisabled){
-            firePropertyChange(SCROLLING_PROPERTY, null, scrollingDisabled);
-        }
         this.scrollingDisabled = scrollingDisabled;
         if(plotArea != null) {
             plotArea.setScrollingDisabled(this.scrollingDisabled);

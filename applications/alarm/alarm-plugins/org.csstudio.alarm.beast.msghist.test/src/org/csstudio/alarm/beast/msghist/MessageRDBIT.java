@@ -9,7 +9,6 @@ package org.csstudio.alarm.beast.msghist;
 
 import static org.junit.Assert.assertTrue;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
 import org.csstudio.alarm.beast.msghist.model.Message;
@@ -73,7 +72,7 @@ public class MessageRDBIT
 
         final BenchmarkTimer timer = new BenchmarkTimer();
         final Message messages[] = log_rdb.getMessages(
-              new NullProgressMonitor(), start, end, filters, 50000,  DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+              new NullProgressMonitor(), start, end, filters, 50000);
         timer.stop();
 
         for (Message message : messages)

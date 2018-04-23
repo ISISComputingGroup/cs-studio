@@ -54,14 +54,12 @@ public class FileUtil {
      */
     public static Element loadXMLFile(final String filePath, final AbstractBaseEditPart widget) throws Exception{
         final IPath path = buildAbsolutePath(filePath, widget);
-        final SAXBuilder saxBuilder = new SAXBuilder();
+        SAXBuilder saxBuilder = new SAXBuilder();
         saxBuilder.setEntityResolver(new CssEntityResolver());
-        saxBuilder.setFeature("http://apache.org/xml/features/xinclude", true);
-
-        final File file = ResourceUtil.getFile(path);
+        File file = ResourceUtil.getFile(path);
         final Document doc;
         if (file == null) {
-            final InputStream inputStream = ResourceUtil.pathToInputStream(path);
+            InputStream inputStream = ResourceUtil.pathToInputStream(path);
             doc = saxBuilder.build(inputStream);
             inputStream.close();
         } else {

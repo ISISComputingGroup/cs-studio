@@ -81,19 +81,13 @@ public class CompactModeAction extends Action implements
             if (!toolbarWasInvisible){
                 WorkbenchWindowService.setToolbarVisibility((WorkbenchWindow) window, true);
             }
-           //status line is always visible in normal mode.
-            WorkbenchWindowService.setStatusLineVisibility((WorkbenchWindow) window, true);
-
-            //toggleToolbarAction.run();
+                //toggleToolbarAction.run();
             shell.setMenuBar(menuBar);
             inCompactMode = false;
             WorkbenchWindowService.setInCompactMode(false);
             setText(COMPACT_MODE);
             setImageDescriptor(compactModeImage);
         } else {
-
-            WorkbenchWindowService.setStatusLineVisibility((WorkbenchWindow) window, PreferencesHelper.showStatusLineInCompactMode());
-
             if(PreferencesHelper.isShowCompactModeDialog()){
                 TipDialog dialog = new TipDialog(shell, "Tip", "Press F8 to exit compact mode.");
                 dialog.open();

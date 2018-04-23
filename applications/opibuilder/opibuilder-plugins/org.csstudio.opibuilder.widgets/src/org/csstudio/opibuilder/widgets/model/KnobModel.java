@@ -70,7 +70,6 @@ public class KnobModel extends AbstractMarkedWidgetModel{
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setForegroundColor(new RGB(0,0,0));
         setScaleOptions(true, true, true);
-        isControlWidget = true;
     }
 
     @Override

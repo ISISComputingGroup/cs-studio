@@ -15,7 +15,6 @@ import java.util.List;
 import org.csstudio.swt.widgets.datadefinition.IManualValueChangeListener;
 import org.csstudio.swt.widgets.figureparts.AlphaLabel;
 import org.csstudio.swt.widgets.util.GraphicsUtil;
-import org.csstudio.swt.widgets.util.OPITimer;
 import org.csstudio.swt.widgets.util.RepeatFiringBehavior;
 import org.csstudio.swt.xygraph.linearscale.AbstractScale.LabelSide;
 import org.csstudio.swt.xygraph.linearscale.LinearScale;
@@ -90,8 +89,6 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 
     private double pageIncrement = 10;
 
-    private boolean runMode = false;
-
     /**
      * Listeners that react on slider events.
      */
@@ -130,7 +127,6 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
         add(label, "label");
 
         addFigureListener(new FigureListener() {
-            @Override
             public void figureMoved(IFigure source) {
                 revalidate();
             }
@@ -138,7 +134,6 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 
         addKeyListener(new KeyListener() {
 
-                @Override
                 public void keyPressed(KeyEvent ke) {
                     if((ke.keycode == SWT.ARROW_DOWN && !horizontal) ||
                             (ke.keycode == SWT.ARROW_LEFT && horizontal) )
@@ -152,19 +147,16 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
                         pageDown();
                 }
 
-                @Override
                 public void keyReleased(KeyEvent ke) {
                 }
             });
 
         addFocusListener(new FocusListener() {
 
-                @Override
                 public void focusGained(FocusEvent fe) {
                     repaint();
                 }
 
-                @Override
                 public void focusLost(FocusEvent fe) {
                     repaint();
                 }
@@ -342,19 +334,12 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
         repaint();
     }
 
+
     @Override
     public void setEnabled(boolean value) {
         super.setEnabled(value);
-        if (runMode) {
-            if(value){
-                track.setCursor(Cursors.HAND);
-                thumb.setCursor(Cursors.HAND);
-            } else {
-                track.setCursor(Cursors.NO);
-                thumb.setCursor(Cursors.NO);
-            }
-        }
         repaint();
+
     }
 
     /**
@@ -436,11 +421,6 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
         fireManualValueChange(getValue());
     }
 
-    public void setRunMode(boolean runMode) {
-        this.runMode = runMode;
-        thumb.setCursor(runMode ? Cursors.HAND: null);
-        track.setCursor(runMode ? Cursors.HAND: null);
-    }
 
     class Thumb extends Polygon {
         class ThumbDragger
@@ -450,14 +430,10 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 
                 protected boolean armed;
 
-                private OPITimer timer;
-
-                @Override
                 public void mouseDoubleClicked(MouseEvent me) {
 
                 }
 
-                @Override
                 public void mouseDragged(MouseEvent me) {
                     if (!armed)
                         return;
@@ -473,23 +449,8 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
                         double valuePosition =
                                 ((LinearScale)scale).getValuePosition(getCoercedValue(), false);
 
-                        // Throttle updates to a maximum of 10 Hz. This avoids a large number of
-                        // updates being queued and continuing to update the PV value (and hence
-                        // the slider position) after the drag has finished.
-                        if(value != oldValue) {
-                            if(timer == null) {
-                                timer = new OPITimer();
-                            }
-                            if(timer.isDue()) {
-                                timer.start(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        // This call is what finally sets the PV value to the
-                                        // latest cached value.
-                                        fireManualValueChange(value);
-                                    }
-                                }, 100);
-                            }
+                        if(value != oldValue){
+                            fireManualValueChange(value);
                         }
                         start = new Point(
                                     horizontal? valuePosition: 0,
@@ -500,21 +461,18 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 
 
 
-                @Override
                 public void mouseEntered(MouseEvent me) {
                     temp = thumbColor;
                     thumbColor = GREEN_COLOR;
                     repaint();
                 }
 
-                @Override
                 public void mouseExited(MouseEvent me) {
                     thumbColor = temp;
                     label.setVisible(false);
                     repaint();
                 }
 
-                @Override
                 public void mousePressed(MouseEvent me) {
                     if(me.button != 1)
                         return;
@@ -532,7 +490,6 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 
                 }
 
-                @Override
                 public void mouseReleased(MouseEvent me) {
                     if(me.button != 1)
                         return;
@@ -608,7 +565,6 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
 
                 behavior.setRunTask(new Runnable() {
 
-                    @Override
                     public void run() {
                         if(pageUp){
                             if(getValue() >=pressedValue)
@@ -828,7 +784,6 @@ public class ScaledSliderFigure extends AbstractLinearMarkedFigure {
                 setLabel();
         }
 
-        @Override
         public void layout(IFigure container) {
             if(horizontal)
                 horizontalLayout(container);

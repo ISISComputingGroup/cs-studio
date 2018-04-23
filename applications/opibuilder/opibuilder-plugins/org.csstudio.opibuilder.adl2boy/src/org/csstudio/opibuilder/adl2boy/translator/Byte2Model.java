@@ -24,10 +24,7 @@ public class Byte2Model extends AbstractADL2Model {
         if (byteWidget != null) {
             setADLObjectProps(byteWidget, widgetModel);
             setADLMonitorProps(byteWidget, widgetModel);
-
-            widgetModel.setPropertyValue(ByteMonitorModel.PROP_HORIZONTAL, ! byteWidget.getDirection().equals("down"));
         }
-
         //TODO many things
         TranslatorUtils.printNotHandledWarning(className, "many things");
     }

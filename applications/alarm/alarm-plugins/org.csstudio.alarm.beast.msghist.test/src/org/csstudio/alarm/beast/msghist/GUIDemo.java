@@ -7,8 +7,6 @@
  ******************************************************************************/
 package org.csstudio.alarm.beast.msghist;
 
-import java.time.format.DateTimeFormatter;
-
 import org.csstudio.alarm.beast.msghist.gui.GUI;
 import org.csstudio.alarm.beast.msghist.model.Model;
 import org.eclipse.swt.graphics.Rectangle;
@@ -37,8 +35,8 @@ public class GUIDemo
             shell.setBounds((screen.width-WIDTHS)/2,
                     (screen.height-HEIGHT)/2, WIDTHS, HEIGHT);
 
-            final Model model = new Model(MessageRDBIT.URL, MessageRDBIT.USER, MessageRDBIT.PASSWORD, MessageRDBIT.SCHEMA, 1000, DateTimeFormatter.ISO_LOCAL_DATE_TIME, shell);
-            new GUI(null, shell, model, null, null, false, false);
+            final Model model = new Model(MessageRDBIT.URL, MessageRDBIT.USER, MessageRDBIT.PASSWORD, MessageRDBIT.SCHEMA, 1000, shell);
+            new GUI(null, shell, model);
 
             shell.open();
 
@@ -50,7 +48,7 @@ public class GUIDemo
                     display.sleep();
             display.dispose(); // !
         }
-        catch (Exception ex)
+        catch (Throwable ex)
         {
             ex.printStackTrace();
         }

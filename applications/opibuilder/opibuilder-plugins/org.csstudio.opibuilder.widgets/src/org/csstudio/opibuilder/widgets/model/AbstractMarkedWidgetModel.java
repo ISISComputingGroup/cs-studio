@@ -78,7 +78,6 @@ public abstract class AbstractMarkedWidgetModel extends AbstractScaledWidgetMode
     /** The default color of the hihi color property. */
     private static final RGB DEFAULT_HIHI_COLOR = new RGB(255,0,0);
 
-    protected boolean isControlWidget = false;
 
     @Override
     protected void configureProperties() {
@@ -226,12 +225,5 @@ public abstract class AbstractMarkedWidgetModel extends AbstractScaledWidgetMode
      */
     public boolean isLimitsFromPV() {
         return (Boolean) getProperty(PROP_LIMITS_FROM_PV).getPropertyValue();
-    }
-
-    /**
-     * @return true if this widget is a control widget, i.e. used to SET PV values
-     */
-    public boolean isControlWidget() {
-        return isControlWidget;
     }
 }

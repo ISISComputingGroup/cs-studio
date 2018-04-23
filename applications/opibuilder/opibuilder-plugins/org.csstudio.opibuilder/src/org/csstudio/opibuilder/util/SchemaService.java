@@ -1,6 +1,5 @@
 package org.csstudio.opibuilder.util;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -23,53 +22,19 @@ import org.eclipse.swt.widgets.Display;
 public final class SchemaService {
 
     private static SchemaService instance;
+
     private Map<String, AbstractWidgetModel> schemaWidgetsMap;
 
 
-    /*
-     * Instantiating the schema service with the modal process dialog uses the UI thread.
-     * When process dialog is open in UI thread it interferes with connection which is drawn from/to linking containers.
-     *
-     * This causes bug with the connections not being displayed.
-     *
-     * Instance of SchemaService without dialog is created from first instance of WidgetNodeEditPolicy
-    */
-
-
-    private SchemaService(boolean dialog) {
-        schemaWidgetsMap = new HashMap<>();
-        if (dialog){
-          reLoad();
-        }
-        else {
-          reLoadNoProgressMonitor();
-        }
+    private SchemaService() {
+        schemaWidgetsMap = new HashMap<String, AbstractWidgetModel>();
+        reLoad();
     }
 
-    public static final synchronized SchemaService getInstance() {
+    public synchronized static final SchemaService getInstance() {
         if (instance == null)
-            instance = new SchemaService(true);
+            instance = new SchemaService();
         return instance;
-    }
-
-    public static final synchronized SchemaService getInstance(boolean dialog) {
-        if (instance == null)
-            instance = new SchemaService(dialog);
-        return instance;
-    }
-
-    /**
-     * Reloading schema OPI without the progress monitor
-     */
-
-    public void reLoadNoProgressMonitor() {
-        schemaWidgetsMap.clear();
-        final IPath schemaOPI = PreferencesHelper.getSchemaOPIPath();
-        if (schemaOPI == null || schemaOPI.isEmpty()) {
-            return;
-        }
-        OPIBuilderPlugin.getLogger().log(Level.INFO, () -> "Schema service: connecting to " + schemaOPI);
-        loadSchema(schemaOPI);
     }
 
     /**
@@ -87,7 +52,8 @@ public final class SchemaService {
                 @Override
                 public void run(IProgressMonitor monitor) throws InvocationTargetException,
                         InterruptedException {
-                    monitor.beginTask("Connecting to " + schemaOPI,IProgressMonitor.UNKNOWN);
+                    monitor.beginTask("Connecting to " + schemaOPI,
+                            IProgressMonitor.UNKNOWN);
                     loadSchema(schemaOPI);
                     monitor.done();
                 }
@@ -101,15 +67,16 @@ public final class SchemaService {
         }
         else
             loadSchema(schemaOPI);
+
     }
 
     /**
      * @param schemaOPI
      */
     public void loadSchema(final IPath schemaOPI) {
-        InputStream inputStream = null;
         try {
-            inputStream = ResourceUtil.pathToInputStream(schemaOPI, false);
+            InputStream inputStream = ResourceUtil.pathToInputStream(
+                    schemaOPI, false);
             DisplayModel displayModel = new DisplayModel(schemaOPI);
             XMLUtil.fillDisplayModelFromInputStream(inputStream,
                     displayModel, Display.getDefault());
@@ -124,14 +91,6 @@ public final class SchemaService {
             OPIBuilderPlugin.getLogger().log(Level.WARNING,
                     message, e);
             ConsoleService.getInstance().writeError(message + "\n" + e);//$NON-NLS-1$
-        }
-        finally {
-           if (inputStream != null)
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                ErrorHandlerUtil.handleError("Failed to close stream", e);
-            }
         }
     }
 

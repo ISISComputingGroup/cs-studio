@@ -1,5 +1,6 @@
 package org.csstudio.trayicon;
 
+import org.csstudio.startup.application.OpenDocumentEventProcessor;
 import org.csstudio.utility.product.ApplicationWorkbenchAdvisor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -13,8 +14,8 @@ public class TrayApplicationWorkbenchAdvisor extends ApplicationWorkbenchAdvisor
 
     private TrayIcon trayIcon;
 
-    public TrayApplicationWorkbenchAdvisor() {
-        super();
+    public TrayApplicationWorkbenchAdvisor(OpenDocumentEventProcessor openDocProcessor) {
+        super(openDocProcessor);
         trayIcon = new TrayIcon();
     }
 

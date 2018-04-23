@@ -68,7 +68,6 @@ public class BoolButtonFigure extends AbstractBoolControlFigure {
          * @param y the y coordinate
          * @return <code>true</code>if the given point is contained
          */
-        @Override
         public boolean containsPoint(int x, int y) {
             if (!super.containsPoint(x, y))
                 return false;
@@ -184,7 +183,6 @@ public class BoolButtonFigure extends AbstractBoolControlFigure {
         /**
          * This must be implemented to make tool tip work. I don't know why.
          */
-        @Override
         public boolean containsPoint(int x, int y) {
             return getBounds().getCopy().shrink(2, 2).contains(x, y);
         }
@@ -441,18 +439,20 @@ public class BoolButtonFigure extends AbstractBoolControlFigure {
         super.setEnabled(value);
         if(runMode){
             if(value){
-                cursor = Cursors.HAND;
-            } else {
-                cursor = Cursors.NO;
+                if(cursor == null || cursor.isDisposed())
+                    cursor = Cursors.HAND;
+            }else {
+                cursor = null;
             }
         }
-        if(squareButton) {
+        if(squareButton)
             squareButtonFigure.setEnabled(value);
-            squareButtonFigure.setCursor(runMode ? cursor : null);
-        } else {
+        else
             ellipseButton.setEnabled(value);
+        if(ellipseButton.isVisible())
             ellipseButton.setCursor(runMode ? cursor : null);
-        }
+        else if (squareButtonFigure.isVisible())
+            squareButtonFigure.setCursor(runMode ? cursor : null);
     }
 
     @Override

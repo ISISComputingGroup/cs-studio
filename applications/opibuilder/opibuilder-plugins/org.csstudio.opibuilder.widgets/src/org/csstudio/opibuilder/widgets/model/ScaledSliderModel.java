@@ -73,7 +73,6 @@ public class ScaledSliderModel extends AbstractMarkedWidgetModel{
     public ScaledSliderModel() {
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setForegroundColor(new RGB(0,0,0));
-        isControlWidget = true;
     }
 
     @Override

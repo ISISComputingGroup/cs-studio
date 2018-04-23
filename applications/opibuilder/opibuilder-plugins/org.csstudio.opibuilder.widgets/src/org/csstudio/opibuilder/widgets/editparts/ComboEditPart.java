@@ -38,8 +38,6 @@ import org.eclipse.swt.widgets.Combo;
  *
  */
 public final class ComboEditPart extends AbstractPVWidgetEditPart {
-    /** Running on Windows ("win32" or similar) */
-    private static final boolean is_windows = SWT.getPlatform().toLowerCase().contains("win");
 
     private IPVListener loadItemsFromPVListener;
 
@@ -85,9 +83,7 @@ public final class ComboEditPart extends AbstractPVWidgetEditPart {
                         public void widgetSelected(SelectionEvent e) {
                             // Only react if the selection was accomplished
                             // by clicking on an item.
-                            // Skip this test on windows, where the stateMask
-                            // is always empty, so cannot guard against scroll wheel changes.
-                            if (is_windows  ||  e.stateMask == SWT.BUTTON1)
+                            if (e.stateMask == SWT.BUTTON1)
                                 setPVValue(AbstractPVWidgetModel.PROP_PVNAME, combo.getText());
                             else
                             {   // Ignore selections from mouse wheel (stateMask == 0).

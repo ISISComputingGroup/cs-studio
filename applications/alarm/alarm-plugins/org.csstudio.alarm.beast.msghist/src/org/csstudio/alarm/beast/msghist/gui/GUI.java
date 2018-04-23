@@ -17,7 +17,6 @@ import java.util.logging.Level;
 import org.csstudio.alarm.beast.msghist.Activator;
 import org.csstudio.alarm.beast.msghist.Preferences;
 import org.csstudio.alarm.beast.msghist.PropertyColumnPreference;
-import org.csstudio.alarm.beast.msghist.model.FilterQuery;
 import org.csstudio.alarm.beast.msghist.model.Message;
 import org.csstudio.alarm.beast.msghist.model.Model;
 import org.csstudio.alarm.beast.msghist.model.ModelListener;
@@ -34,7 +33,6 @@ import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -43,6 +41,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -68,11 +68,11 @@ import org.eclipse.ui.preferences.ScopedPreferenceStore;
  * SWT GUI for Model: Table of messages.
  *
  * @author Kay Kasemir
- * @author benhadj naceur @ sopra group - iter
- * @author Borut Terpinc
+ * @author benhadj naceur @  sopra group - iter
  */
 @SuppressWarnings("nls")
-public class GUI extends Composite implements ModelListener {
+public class GUI implements ModelListener, DisposeListener
+{
 
     /** The model. */
     final private Model model;
@@ -89,9 +89,6 @@ public class GUI extends Composite implements ModelListener {
     /** The auto refresh. */
     private Button times, filter, refresh, autoRefresh;
 
-    /** The filter status. */
-    private Label filterStatus;
-
     /** The time unit. */
     private TimeUnit timeUnit = TimeUnit.SECONDS;
 
@@ -101,7 +98,7 @@ public class GUI extends Composite implements ModelListener {
     /** The current auto refresh period (milliseconds). */
     private long autoRefreshCurrentPeriod = 0;
 
-    /** The auto refresh current start. */
+    /** The auto refresh current start.  */
     private AutoRefreshCurrentState autoRefreshStatus = AutoRefreshCurrentState.STOPPED;
 
     /** The auto refresh enable msg. */
@@ -113,11 +110,8 @@ public class GUI extends Composite implements ModelListener {
     /** The end time. */
     private String endTime = "now";
 
-    /** Filter status msg format. */
-    private String FILTER_STATUS_FORMAT = "Current filter: %s";
-
     /** The log info msg auto refresh started. */
-    private String LOG_INFO_MSG_AUTO_REFRESH_STARTED = "auto refresh at ";
+    private String LOG_INFO_MSG_AUTO_REFRESH_STARTED = "auto refresh at " ;
 
     /** The log info msg auto refresh stopped. */
     private String LOG_INFO_MSG_AUTO_REFRESH_STOPPED = "auto refresh is stopped ";
@@ -138,41 +132,26 @@ public class GUI extends Composite implements ModelListener {
     /**
      * Construct GUI.
      *
-     * @param site
-     *            Workbench site or <code>null</code>.
-     * @param parent
-     *            Parent widget/shell
-     * @param model
-     *            Model to display in GUI
-     * @param columns
-     *            columns to display in GUI.
-     * @param defaultSortingColumn
-     *            default property used for sorting.
-     * @param sortAscending
-     *            default sorting direction.
-     * @param showHeaders
-     *            whether to show table header or not.
+     * @param site Workbench site or <code>null</code>.
+     * @param parent Parent widget/shell
+     * @param model Model to display in GUI
      */
-    public GUI(IWorkbenchPartSite site, final Composite parent, final Model model, PropertyColumnPreference[] columns,
-            String defaultSortingProperty, boolean sortAscending, boolean showHeaders) {
-        super(parent, SWT.NONE);
+    public GUI(IWorkbenchPartSite site, final Composite parent, final Model model)
+    {
         this.model = model;
-        this.imageAutoRefreshRun = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.ID, "icons/pause.gif")
-                .createImage();
-        this.imageManualRefresh = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.ID, "icons/refresh.gif")
-                .createImage();
+        this.imageAutoRefreshRun = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.ID, "icons/pause.gif").createImage();
+        this.imageManualRefresh = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.ID, "icons/refresh.gif").createImage();
         this.autoRefreshCurrentPeriod = Preferences.getAutoRefreshPeriod();
-        try {
-            createGUI(columns, defaultSortingProperty, sortAscending, showHeaders);
-        } catch (Exception ex) {
-            MessageDialog.openError(parent.getShell(), "Error", "Initialization error: " + ex.getMessage());
+        try
+        {
+            createGUI(parent);
+        }
+        catch (Exception ex)
+        {
+            MessageDialog.openError(parent.getShell(), "Error",
+                "Initialization error: " + ex.getMessage());
             return;
         }
-
-        // If model wasn't provided, only static GUI is created (needed by OPI
-        // wrapper)
-        if (model == null)
-            return;
 
         model.addListener(this);
 
@@ -185,27 +164,24 @@ public class GUI extends Composite implements ModelListener {
             /*
              * (non-Javadoc)
              *
-             * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange (org.eclipse.jface.util.PropertyChangeEvent)
+             * @see
+             * org.eclipse.jface.util.IPropertyChangeListener#propertyChange
+             * (org.eclipse.jface.util.PropertyChangeEvent)
              */
             @Override
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                if (Preferences.AUTO_REFRESH_PERIOD.equals(propertyChangeEvent.getProperty())) {
-                    long newAutoRefreshPeriod = Preferences.getAutoRefreshPeriod();
-                    if (newAutoRefreshPeriod == 0) { // error case => execute
-                                                     // stop auto-refresh
+                if (Preferences.AUTO_REFRESH_PERIOD.equals(propertyChangeEvent
+                        .getProperty())) {
+                    long newAutoRefreshPeriod = Preferences
+                            .getAutoRefreshPeriod();
+                    if (newAutoRefreshPeriod == 0) { // error case => execute stop auto-refresh
                         autoRefreshCurrentPeriod = newAutoRefreshPeriod;
                         stopAutoRefresh();
-                    } else if (newAutoRefreshPeriod != autoRefreshCurrentPeriod && newAutoRefreshPeriod > 0) {
-                        if (AutoRefreshCurrentState.STARTED.equals(autoRefreshStatus)) { // if
-                                                                                         // auto-refresh
-                                                                                         // is
-                                                                                         // running
-                            restartAutoRefresh(newAutoRefreshPeriod, true); // restart
-                                                                            // with
-                                                                            // the
-                                                                            // new
-                                                                            // refresh
-                                                                            // period
+                    } else if (newAutoRefreshPeriod != autoRefreshCurrentPeriod
+                            && newAutoRefreshPeriod > 0) {
+                        if (AutoRefreshCurrentState.STARTED
+                                .equals(autoRefreshStatus)) { // if auto-refresh is running
+                            restartAutoRefresh(newAutoRefreshPeriod, true); // restart with the new refresh period
                             return;
                         }
                         // start auto-refresh and change its current state
@@ -216,9 +192,9 @@ public class GUI extends Composite implements ModelListener {
             }
         };
 
-        // listener on preferences
-        archiveRDBStore = new ScopedPreferenceStore(InstanceScope.INSTANCE,
-                org.csstudio.alarm.beast.msghist.Activator.ID);
+        //listener on preferences
+        archiveRDBStore = new ScopedPreferenceStore(
+                InstanceScope.INSTANCE, org.csstudio.alarm.beast.msghist.Activator.ID);
         archiveRDBStore.addPropertyChangeListener(iPropertyChangeListener);
 
         // Publish the current selection to the site
@@ -233,108 +209,114 @@ public class GUI extends Composite implements ModelListener {
      *
      * @return Table which provides the currently selected message
      */
-    public ISelectionProvider getSelectionProvider() {
+    public ISelectionProvider getSelectionProvider()
+    {
         return table_viewer;
     }
 
     /**
-     * Update Model's time range, display exception in dialog box. If all goes well, GUI should update in response to model's
+     * Update Model's time range, display exception in dialog box.
+     * If all goes well, GUI should update in response to model's
      * update event.
      *
-     * @param start_spec
-     *            the start_spec
-     * @param end_spec
-     *            the end_spec
+     * @param start_spec the start_spec
+     * @param end_spec the end_spec
      */
-    private void updateTimeRange(final String start_spec, final String end_spec) {
-        try {
+    private void updateTimeRange(final String start_spec, final String end_spec)
+    {
+        try
+        {
             model.setTimerange(start_spec, end_spec);
-        } catch (Exception ex) {
-            MessageDialog.openError(times.getShell(), "Error", "Error in start/end times:\n" + ex.getMessage());
+        }
+        catch (Exception ex)
+        {
+            MessageDialog.openError(times.getShell(),
+                    "Error",
+                    "Error in start/end times:\n" + ex.getMessage());
         }
     }
 
-    /**
-     * Update Model's filter, display exception in dialog box. If all goes well, GUI should update in response to model's update
-     * event.
+    /** Update Model's filter, display exception in dialog box.
+     *  If all goes well, GUI should update in response to model's
+     *  update event.
      */
-    private void updateFilters() {
-        final FilterDialog dlg = new FilterDialog(filter.getShell(), properties, model.getFilters());
+    private void updateFilters()
+    {
+        final FilterDialog dlg = new FilterDialog(filter.getShell(),
+                properties, model.getFilters());
         if (dlg.open() != Window.OK)
             return;
-        try {
+        try
+        {
             model.setFilters(dlg.getFilters());
-        } catch (Exception ex) {
-            MessageDialog.openError(times.getShell(), "Error", "Error in filter:\n" + ex.getMessage());
+        }
+        catch (Exception ex)
+        {
+            MessageDialog.openError(times.getShell(), "Error",
+                    "Error in filter:\n" + ex.getMessage());
         }
     }
 
     /**
      * Create GUI elements.
      *
-     * @param parent
-     *            Parent shell/site/window
-     * @throws Exception
-     *             on error
+     * @param parent Parent shell/site/window
+     * @throws Exception on error
      */
-    private void createGUI(PropertyColumnPreference[] columns, String defaultSortingProperty, boolean sortAscending,
-            boolean showHeaders) throws Exception {
+    private void createGUI(final Composite parent) throws Exception
+    {
         GridLayout layout = new GridLayout();
         layout.numColumns = 8;
-        setLayout(layout);
+        parent.setLayout(layout);
         GridData gd;
 
-        // Start: ___start__ End: ___end___ [Times] [Filter]
-        Label l = new Label(this, 0);
+        // Start: ___start__  End: ___end___ [Times] [Filter]
+        Label l = new Label(parent, 0);
         l.setText("Start:");
         l.setLayoutData(new GridData());
 
-        start = new Text(this, SWT.BORDER);
+        start = new Text(parent, SWT.BORDER);
         start.setToolTipText("Enter start time");
         gd = new GridData();
         gd.grabExcessHorizontalSpace = true;
         gd.horizontalAlignment = SWT.FILL;
         start.setLayoutData(gd);
 
-        l = new Label(this, 0);
+        l = new Label(parent, 0);
         l.setText("End:");
         l.setLayoutData(new GridData());
 
-        end = new Text(this, SWT.BORDER);
+        end = new Text(parent, SWT.BORDER);
         end.setToolTipText("Enter end time");
         gd = new GridData();
         gd.grabExcessHorizontalSpace = true;
         gd.horizontalAlignment = SWT.FILL;
         end.setLayoutData(gd);
 
-        times = new Button(this, SWT.PUSH);
+        times = new Button(parent, SWT.PUSH);
         times.setText("Times");
         times.setToolTipText("Configure time range");
         times.setLayoutData(new GridData());
 
-        filter = new Button(this, SWT.PUSH);
+        filter = new Button(parent, SWT.PUSH);
         filter.setText("Filter");
         filter.setToolTipText("Configure filters");
         filter.setLayoutData(new GridData());
 
-        refresh = new Button(this, SWT.PUSH | SWT.NO_FOCUS);
+        refresh = new Button(parent, SWT.PUSH | SWT.NO_FOCUS);
         refresh.setImage(imageManualRefresh);
         refresh.setToolTipText("Manual refresh");
         refresh.setLayoutData(new GridData());
 
-        autoRefresh = new Button(this, SWT.TOGGLE);
+        autoRefresh = new Button(parent, SWT.TOGGLE);
         autoRefresh.setImage(imageAutoRefreshRun);
         autoRefresh.setSelection(true);
         autoRefresh.setToolTipText(autoRefreshEnableMsg);
         autoRefresh.setLayoutData(new GridData());
 
-        filterStatus = new Label(this, SWT.NONE);
-        filterStatus.setText(String.format(FILTER_STATUS_FORMAT, ""));
-        filterStatus.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, layout.numColumns, 1));
-
         // New row: Table of messages
         // TableColumnLayout requires the TableViewer to be in its own Composite
-        final Composite table_parent = new Composite(this, 0);
+        final Composite table_parent = new Composite(parent, 0);
         table_parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, layout.numColumns, 1));
 
         // Auto-size table columns
@@ -344,77 +326,90 @@ public class GUI extends Composite implements ModelListener {
         table_viewer = new TableViewer(table_parent,
                 SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.MULTI | SWT.VIRTUAL);
         final Table table = table_viewer.getTable();
-        table.setHeaderVisible(showHeaders);
+        table.setHeaderVisible(true);
         table.setLinesVisible(true);
 
         table_viewer.setContentProvider(new MessageContentProvider());
         ColumnViewerToolTipSupport.enableFor(table_viewer);
 
         // Columns display message properties
-        properties = new String[columns.length];
-        for (int i = 0; i < columns.length; ++i) {
-            properties[i] = columns[i].getName();
-            if (!columns[i].isVisible())
-                continue;
+        final PropertyColumnPreference[] col_pref =
+                                Preferences.getPropertyColumns();
+        properties = new String[col_pref.length];
+        for (int i=0; i<col_pref.length; ++i)
+        {
+            properties[i] = col_pref[i].getName();
             final TableViewerColumn view_col = new TableViewerColumn(table_viewer, 0);
             final TableColumn table_col = view_col.getColumn();
-            table_col.setText(columns[i].getName());
+            table_col.setText(col_pref[i].getName());
             table_col.setMoveable(true);
-            table_layout.setColumnData(table_col, new ColumnWeightData(columns[i].getWeight(), columns[i].getSize()));
-
-            CellLabelProvider labelProvider;
-            SortingColumnSelector columnSelector;
-            final TableColumn col = view_col.getColumn();
+            table_layout.setColumnData(table_col,
+                    new ColumnWeightData(col_pref[i].getWeight(), col_pref[i].getSize()));
             // Seq, ID columns are special
-            if (properties[i].equalsIgnoreCase(Message.SEQ)) {
-                labelProvider = new SeqProvider();
+            if (properties[i].equalsIgnoreCase(Message.SEQ))
+            {
+                view_col.setLabelProvider(new SeqProvider());
                 // Sort numerically by sequence
-                columnSelector = new SeqColumnSortingSelector(table_viewer, col);
-            } else if (properties[i].equalsIgnoreCase(Message.ID)) {
-                labelProvider = new IDProvider();
+                final TableColumn col = view_col.getColumn();
+                col.addSelectionListener(new SeqColumnSortingSelector(table_viewer, col));
+            }
+            else if (properties[i].equalsIgnoreCase(Message.ID))
+            {
+                view_col.setLabelProvider(new IDProvider());
                 // Sort numerically by ID
-                columnSelector = new IDColumnSortingSelector(table_viewer, col);
+                final TableColumn col = view_col.getColumn();
+                col.addSelectionListener(new IDColumnSortingSelector(table_viewer, col));
             }
             // SEVERITY type columns have special color coding
-            else if (properties[i].toLowerCase().indexOf(Message.SEVERITY.toLowerCase()) >= 0) {
-                labelProvider = new SeverityLabelProvider(properties[i], this);
+            else if (properties[i].toLowerCase().indexOf(Message.SEVERITY.toLowerCase()) >= 0)
+            {
+                view_col.setLabelProvider(
+                        new SeverityLabelProvider(properties[i], parent));
                 // Sort alphabetically
-                columnSelector = new PropertyColumnSortingSelector(table_viewer, col, properties[i]);
+                final TableColumn col = view_col.getColumn();
+                col.addSelectionListener(
+                        new PropertyColumnSortingSelector(table_viewer, col, properties[i]));
             }
-            // other columns display & sort property as string
-            else {
-                labelProvider = new PropertyLabelProvider(properties[i]);
-                columnSelector = new PropertyColumnSortingSelector(table_viewer, col, properties[i]);
+            else // other columns display & sort property as string
+            {
+                view_col.setLabelProvider(new PropertyLabelProvider(properties[i]));
+                final TableColumn col = view_col.getColumn();
+                col.addSelectionListener(
+                        new PropertyColumnSortingSelector(table_viewer, col, properties[i]));
             }
-
-            view_col.setLabelProvider(labelProvider);
-            col.addSelectionListener(columnSelector);
-
-            // set default sorting column
-            if (properties[i].equalsIgnoreCase(defaultSortingProperty))
-                columnSelector.sort(!sortAscending);
         }
 
         table_viewer.setInput(model);
+
+        parent.addDisposeListener(this);
     }
 
     /**
      * Connect listeners to GUI elements.
      */
-    private void connectGUIActions() {
-        times.addSelectionListener(new SelectionAdapter() {
+    private void connectGUIActions()
+    {
+        times.addSelectionListener(new SelectionAdapter()
+        {
             @Override
-            public void widgetSelected(SelectionEvent e) {
-                final StartEndDialog dlg = new StartEndDialog(times.getShell(), start.getText(), end.getText());
+            public void widgetSelected(SelectionEvent e)
+            {
+                final StartEndDialog dlg =
+                    new StartEndDialog(times.getShell(),
+                            start.getText(), end.getText());
                 if (dlg.open() != Window.OK)
                     return;
-                updateTimeRange(dlg.getStartSpecification(), dlg.getEndSpecification());
+                updateTimeRange(dlg.getStartSpecification(),
+                            dlg.getEndSpecification());
             }
         });
 
-        final SelectionListener start_end_handler = new SelectionAdapter() {
+
+        final SelectionListener start_end_handler = new SelectionAdapter()
+        {
             @Override
-            public void widgetDefaultSelected(final SelectionEvent e) {
+            public void widgetDefaultSelected(final SelectionEvent e)
+            {
                 updateTimeRange(start.getText(), end.getText());
             }
         };
@@ -422,33 +417,41 @@ public class GUI extends Composite implements ModelListener {
         start.addSelectionListener(start_end_handler);
         end.addSelectionListener(start_end_handler);
 
-        filter.addSelectionListener(new SelectionAdapter() {
+        filter.addSelectionListener(new SelectionAdapter()
+        {
             @Override
-            public void widgetSelected(final SelectionEvent e) {
+            public void widgetSelected(final SelectionEvent e)
+            {
                 updateFilters();
             }
         });
 
         // Double-click on message opens detail
-        table_viewer.getTable().addMouseListener(new MouseAdapter() {
+        table_viewer.getTable().addMouseListener(new MouseAdapter()
+        {
             @Override
-            public void mouseDoubleClick(MouseEvent e) {
+            public void mouseDoubleClick(MouseEvent e)
+            {
                 new OpenViewAction(IPageLayout.ID_PROP_SHEET).run();
             }
         });
 
-        refresh.addSelectionListener(new SelectionAdapter() {
+        refresh.addSelectionListener(new SelectionAdapter()
+        {
             @Override
-            public void widgetSelected(final SelectionEvent e) {
+            public void widgetSelected(final SelectionEvent e)
+            {
                 refresh.getParent().getShell().setFocus();
                 updateTimeRange(start.getText(), end.getText());
             }
         });
 
         initializeAutoRefresh(autoRefreshCurrentPeriod, true);
-        autoRefresh.addSelectionListener(new SelectionAdapter() {
+        autoRefresh.addSelectionListener(new SelectionAdapter()
+        {
             @Override
-            public void widgetSelected(final SelectionEvent e) {
+            public void widgetSelected(final SelectionEvent e)
+            {
                 if (!autoRefresh.getSelection()) {
                     startAutoRefresh();
                 } else {
@@ -461,14 +464,14 @@ public class GUI extends Composite implements ModelListener {
     /**
      * Add context menu to table.
      *
-     * @param site
-     *            the site
+     * @param site the site
      */
-    private void connectContextMenu(final IWorkbenchPartSite site) {
+    private void connectContextMenu(final IWorkbenchPartSite site)
+    {
         final Table table = table_viewer.getTable();
         final MenuManager manager = new MenuManager();
         manager.add(new OpenViewAction(IPageLayout.ID_PROP_SHEET, "Show Detail"));
-        if (SingleSourcePlugin.getUIHelper().getUI().equals(UI.RCP)) {
+        if(SingleSourcePlugin.getUIHelper().getUI().equals(UI.RCP)) {
             manager.add(new ExportAction(table.getShell(), model));
         }
         manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -483,28 +486,27 @@ public class GUI extends Composite implements ModelListener {
     /**
      * Update GUI when model changed.
      *
-     * @param model
-     *            the model
+     * @param model the model
      * @see ModelListener
      */
     @Override
-    public void modelChanged(final Model model) { // Can be called from
-                                                  // background thread...
-        if (table_viewer.getTable().isDisposed())
-            return;
+    public void modelChanged(final Model model)
+    {   // Can be called from background thread...
+        if (table_viewer.getTable().isDisposed()) return;
         final Display display = table_viewer.getTable().getDisplay();
-        display.asyncExec(new Runnable() {
+        display.asyncExec(new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 if (start.isDisposed())
                     return;
                 if (!start.isFocusControl())
                     start.setText(model.getStartSpec());
                 if (!end.isFocusControl())
                     end.setText(model.getEndSpec());
-                filterStatus.setText(String.format(FILTER_STATUS_FORMAT, FilterQuery.fromModel(model)));
 
-                // refresh table and keep selections
+                //refresh table and keep selections
                 int[] tableSelectionIndices = table_viewer.getTable().getSelectionIndices();
                 Message[] messages = new Message[tableSelectionIndices.length];
 
@@ -531,16 +533,15 @@ public class GUI extends Composite implements ModelListener {
 
     }
 
+
     /**
      * Initialize auto refresh.
      *
-     * @param delay
-     *            the delay
+     * @param delay the delay
      */
     private void initializeAutoRefresh(long delay, boolean isPeriodUpdated) {
         // check conditions
-        if (!checkAutoRefreshConditions())
-            return;
+        if (!checkAutoRefreshConditions()) return;
         // start auto-refresh process
         autoRefreshStatus = AutoRefreshCurrentState.STARTED;
         timerAutoRefresh = new Timer("Timer auto-refresh");
@@ -549,9 +550,9 @@ public class GUI extends Composite implements ModelListener {
         this.autoRefreshCurrentPeriod = delay;
         if (isPeriodUpdated) {
             activateAutoRefresh();
-            Activator.getLogger().log(Level.INFO,
-                    LOG_INFO_MSG_AUTO_REFRESH_STARTED + TimeUnit.MILLISECONDS.toSeconds(this.autoRefreshCurrentPeriod)
-                            + " " + TimeUnit.SECONDS.toString().toLowerCase());
+            Activator.getLogger().log(Level.INFO, LOG_INFO_MSG_AUTO_REFRESH_STARTED
+                    + TimeUnit.MILLISECONDS.toSeconds(this.autoRefreshCurrentPeriod)
+                    + " " + TimeUnit.SECONDS.toString().toLowerCase());
         }
     }
 
@@ -562,13 +563,12 @@ public class GUI extends Composite implements ModelListener {
         initializeAutoRefresh(autoRefreshCurrentPeriod, true);
     }
 
+
     /**
      * Restart auto refresh.
      *
-     * @param delay
-     *            the delay
-     * @param isPeriodUpdated
-     *            the is period updated
+     * @param delay the delay
+     * @param isPeriodUpdated the is period updated
      */
     private void restartAutoRefresh(long delay, boolean isPeriodUpdated) {
         switch (autoRefreshStatus) {
@@ -600,6 +600,7 @@ public class GUI extends Composite implements ModelListener {
         Activator.getLogger().log(Level.INFO, LOG_INFO_MSG_AUTO_REFRESH_STOPPED);
     }
 
+
     /**
      * The Class StartAutoRefreshTask.
      */
@@ -619,27 +620,26 @@ public class GUI extends Composite implements ModelListener {
         }
     }
 
+
     /**
      * Activate auto refresh.
      */
     private synchronized void activateAutoRefresh() {
-        if (autoRefresh.isDisposed())
-            return;
-        autoRefresh
-                .setToolTipText(autoRefreshDisableMsg + TimeUnit.MILLISECONDS.toSeconds(this.autoRefreshCurrentPeriod)
-                        + " " + timeUnit.toString().toLowerCase());
+        if (autoRefresh.isDisposed()) return;
+        autoRefresh.setToolTipText(autoRefreshDisableMsg
+                + TimeUnit.MILLISECONDS.toSeconds(this.autoRefreshCurrentPeriod)
+                + " " + timeUnit.toString().toLowerCase());
         autoRefresh.setSelection(false);
     }
+
 
     /**
      * Deactivate auto refresh.
      *
-     * @param checkCondition
-     *            the check condition
+     * @param checkCondition the check condition
      */
     private synchronized void deactivateAutoRefresh(boolean checkCondition) {
-        if (autoRefresh.isDisposed())
-            return;
+        if (autoRefresh.isDisposed()) return;
         // ---- set selection
         autoRefresh.setSelection(true);
 
@@ -660,10 +660,11 @@ public class GUI extends Composite implements ModelListener {
         autoRefresh.setToolTipText(autoRefreshEnableMsg);
     }
 
+
     /**
      * Check auto refresh conditions.
-     * <li>refresh period should be set to 0</li>
-     * <li>end time should be set to "now"</li>
+     * <li> refresh period should be set to 0 </li>
+     * <li> end time should be set to "now" </li>
      *
      * @return true, if conditions are verified
      */
@@ -673,18 +674,18 @@ public class GUI extends Composite implements ModelListener {
         // conditions are not verified:
         deactivateAutoRefresh(false);
         autoRefreshStatus = AutoRefreshCurrentState.ERROR;
-        // Activator.getLogger().log(Level.INFO,
-        // LOG_INFO_MSG_AUTO_REFRESH_CONDITION_NOT_VERIFIED);
+//        Activator.getLogger().log(Level.INFO, LOG_INFO_MSG_AUTO_REFRESH_CONDITION_NOT_VERIFIED);
         return false;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void dispose() {
-        if (model != null) {
-            stopAutoRefresh();
-            archiveRDBStore.removePropertyChangeListener(iPropertyChangeListener);
-        }
-        super.dispose();
+    public void widgetDisposed(DisposeEvent disposeEvent) {
+        stopAutoRefresh();
+        archiveRDBStore.removePropertyChangeListener(iPropertyChangeListener);
     }
 
     /**
@@ -692,8 +693,7 @@ public class GUI extends Composite implements ModelListener {
      */
     @Override
     public void onErrorModel(String errorMsg) {
-        if (table_viewer.getTable().isDisposed())
-            return;
+        if (table_viewer.getTable().isDisposed()) return;
         // if exception stop scheduler auto refresh and reset button
         final Display display = table_viewer.getTable().getDisplay();
         display.asyncExec(new Runnable() {
@@ -705,16 +705,14 @@ public class GUI extends Composite implements ModelListener {
         Activator.getLogger().log(Level.WARNING, errorMsg);
     }
 
+
     /**
      * The Enum AutoRefreshCurrentState.
      */
     public enum AutoRefreshCurrentState {
-        STARTED, STOPPED, ERROR // auto-refresh stopped and can not start
-                                // because one of conditions are not validated
-    }
-
-    public TableViewer getTableViewer() {
-        return table_viewer;
+        STARTED,
+        STOPPED,
+        ERROR // auto-refresh stopped and can not start because one of conditions are not validated
     }
 
 }
