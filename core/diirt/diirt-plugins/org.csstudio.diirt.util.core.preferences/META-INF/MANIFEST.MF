@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.csstudio.diirt.util.core.preferences;singleton:=true
 Bundle-Version: 1.0.2.qualifier
 Bundle-Activator: org.csstudio.diirt.util.core.preferences.Activator
 Bundle-Vendor: European Spallation Source ERIC
-Require-Bundle: org.eclipse.core.runtime;bundle-version="3.15.0",
+Require-Bundle: org.eclipse.core.runtime,
  org.apache.commons.io,
  org.apache.commons.lang3;bundle-version="3.1.0",
  org.epics.jca;bundle-version="2.3.6",
