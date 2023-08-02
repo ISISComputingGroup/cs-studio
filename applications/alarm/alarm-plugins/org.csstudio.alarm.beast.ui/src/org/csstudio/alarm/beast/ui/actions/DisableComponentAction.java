@@ -52,7 +52,8 @@ public class DisableComponentAction extends Action
         items.toArray(this.items);
 
         // authorization
-        SecuritySupportUI.registerAction(this, AuthIDs.CONFIGURE);
+        // STFC: change from CONFIGURE to ACKNOWLEDGE
+        SecuritySupportUI.registerAction(this, AuthIDs.ACKNOWLEDGE);
     }
 
     protected boolean doEnable()
