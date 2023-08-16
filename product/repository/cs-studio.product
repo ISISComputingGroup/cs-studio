@@ -91,8 +91,6 @@
       <feature id="org.eclipse.equinox.p2.user.ui"/>
       <feature id="org.eclipse.jgit"/>
       <feature id="org.eclipse.platform"/>
-      <feature id="org.csstudio.alarm.beast.ui.feature"/>
-      <feature id="org.csstudio.alarm.beast.ui.alarmtable.opiwidget.feature"/>
    </features>
 
    <configurations>
