@@ -270,6 +270,7 @@
                     <Bundle-SymbolicName>org.junit-dep</Bundle-SymbolicName>
                   </instructions>
                 </artifact>
+				<!--
                 <artifact>
                   <id>org.python:jython-standalone:2.7.3</id>
                   <source>true</source>
@@ -281,6 +282,7 @@
                     <Eclipse-BuddyPolicy>registered</Eclipse-BuddyPolicy>
                   </instructions>
                 </artifact>
+				-->
                 <artifact>
                   <id>com.miglayout:miglayout-core:4.2</id>
                 </artifact>
