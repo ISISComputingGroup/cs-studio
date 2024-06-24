@@ -31,7 +31,7 @@ public class OPIEditorPerspective implements IPerspectiveFactory
      *  This one is deprecated, but don't know what else to use.
      */
     @SuppressWarnings("deprecation")
-    final static String ID_NAVIGATOR = IPageLayout.ID_RES_NAV;
+    //final static String ID_NAVIGATOR = IPageLayout.ID_RES_NAV;
 
     /** Create suggested OPI Editor layout:
      *  <pre>Navigator | Editor | Properties</pre>
@@ -51,7 +51,7 @@ public class OPIEditorPerspective implements IPerspectiveFactory
                 IPageLayout.BOTTOM, 0.7f, ID_LEFT);
 
         // Stuff for 'left'
-        left.addView(ID_NAVIGATOR);
+        //left.addView(ID_NAVIGATOR);
         leftBottom.addView(IPageLayout.ID_OUTLINE);
 
         // Stuff for 'right'
@@ -62,7 +62,7 @@ public class OPIEditorPerspective implements IPerspectiveFactory
         bottom.addPlaceholder(IPageLayout.ID_PROGRESS_VIEW);
 
         // Populate the "Window/Views..." menu with suggested views
-        layout.addShowViewShortcut(ID_NAVIGATOR);
+        //layout.addShowViewShortcut(ID_NAVIGATOR);
         layout.addShowViewShortcut(IPageLayout.ID_PROP_SHEET);
         layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
         layout.addShowViewShortcut(ID_CONSOLE_VIEW);

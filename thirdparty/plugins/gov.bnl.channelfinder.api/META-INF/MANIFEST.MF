@@ -14,7 +14,7 @@ Bundle-Vendor: Kunal Shroff <kshroff@bnl.gov> - BNL
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: gov.bnl.channelfinder.api.Activator
 Bundle-Description: ChannelFinder Client Library
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: com.sun.xml.bind.v2,
  javax.ws.rs.core
 Export-Package: gov.bnl.channelfinder.api

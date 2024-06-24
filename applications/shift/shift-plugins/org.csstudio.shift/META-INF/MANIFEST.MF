@@ -7,7 +7,7 @@ Bundle-Vendor: The CS-Studio collaboration
 Require-Bundle: org.eclipse.core.runtime,
  gov.bnl.shiftClient,
  org.junit-dep;resolution:=optional
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: org.csstudio.shift,
  org.csstudio.shift.util
 Import-Package: org.csstudio.utility.shift

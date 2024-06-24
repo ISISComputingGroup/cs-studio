@@ -744,6 +744,6 @@
 </location>
 </locations>
 <launcherArgs>
-<vmArgs>-Dosgi.requiredJavaVersion=1.7 -Xms40m -Xmx1024m</vmArgs>
+<vmArgs>-Dosgi.requiredJavaVersion=21 -Xms40m -Xmx1024m</vmArgs>
 </launcherArgs>
 </target>

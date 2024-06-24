@@ -59,7 +59,7 @@ public class Perspective implements IPerspectiveFactory
                 IPageLayout.TOP, 0.33f, "right");
 
         // Stuff for 'left'
-        left.addView(IPageLayout.ID_RES_NAV);
+        //left.addView(IPageLayout.ID_RES_NAV);
 
         // Stuff for 'bottom'
         bottom.addView(ScanUIActivator.ID_SCAN_MONITOR_VIEW);
@@ -75,7 +75,7 @@ public class Perspective implements IPerspectiveFactory
         right.addView(IPageLayout.ID_PROP_SHEET);
 
         // Populate the "Window/Views..." menu with suggested views
-        layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
+        //layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
         layout.addShowViewShortcut(CommandListView.ID);
         layout.addShowViewShortcut(ScanUIActivator.ID_SCAN_MONITOR_VIEW);
         layout.addShowViewShortcut(ScanUIActivator.ID_SCAN_PLOT_VIEW);

@@ -33,7 +33,7 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
+      <!--plugin>
         <groupId>org.eclipse.tycho.extras</groupId>
         <artifactId>tycho-p2-extras-plugin</artifactId>
         <version>${tycho.version}</version>
@@ -44,9 +44,9 @@
             <goals>
               <goal>mirror</goal>
             </goals>
-            <configuration>
+            <configuration-->
               <!-- Details: https://www.eclipse.org/tycho/sitedocs-extras/tycho-p2-extras-plugin/mirror-mojo.html -->
-              <source>
+              <!--source>
                 <repository>
                   <url>${project.baseUri}/target/repository</url>
                   <layout>p2</layout>
@@ -59,7 +59,7 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
+      </plugin-->
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-p2-repository-plugin</artifactId>

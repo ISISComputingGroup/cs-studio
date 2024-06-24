@@ -55,7 +55,7 @@ public class Perspective implements IPerspectiveFactory
         if (left != null) {
             left.addView(SearchView.ID);
             if (rcp) {
-                left.addView(IPageLayout.ID_RES_NAV);
+                //left.addView(IPageLayout.ID_RES_NAV);
             }
         }
 
@@ -77,7 +77,7 @@ public class Perspective implements IPerspectiveFactory
         }
         // Populate the "Window/Views..." menu with suggested views
         if (rcp) {
-            layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
+            //layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
             layout.addShowViewShortcut(IPageLayout.ID_PROP_SHEET);
             layout.addShowViewShortcut(IPageLayout.ID_PROGRESS_VIEW);
         }

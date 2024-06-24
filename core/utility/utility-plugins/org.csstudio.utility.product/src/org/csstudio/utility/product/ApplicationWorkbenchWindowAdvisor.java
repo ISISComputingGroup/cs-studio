@@ -60,7 +60,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor
         configurer.setShowMenuBar(true);
         configurer.setShowPerspectiveBar(true);
         configurer.setShowCoolBar(true);
-        configurer.setShowFastViewBars(true);
+        //configurer.setShowFastViewBars(true);
         configurer.setShowProgressIndicator(true);
         configurer.setShowStatusLine(true);
         configurer.setTitle(Messages.Window_Title);

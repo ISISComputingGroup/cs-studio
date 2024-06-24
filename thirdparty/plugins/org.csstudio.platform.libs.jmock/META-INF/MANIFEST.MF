@@ -43,4 +43,4 @@ Export-Package: org.easymock,
  org.jmock.lib.legacy,
  org.jmock.syntax
 Bundle-Vendor: Desy <css-developer@desy.de>, Bastian Knerr
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21

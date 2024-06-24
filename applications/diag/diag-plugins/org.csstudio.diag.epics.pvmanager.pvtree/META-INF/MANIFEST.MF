@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.csstudio.csdata;bundle-version="3.2.0",
  org.diirt.datasource;bundle-version="3.1.7"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: org.diirt.datasource.expression;version="3.1.7",
  org.diirt.datasource.vtype;version="3.1.7",
  org.diirt.util.array;version="3.1.7",

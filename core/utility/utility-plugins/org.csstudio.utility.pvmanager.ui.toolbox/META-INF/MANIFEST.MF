@@ -9,7 +9,7 @@ Require-Bundle: org.eclipse.ui,
  com.google.guava,
  org.diirt.datasource;bundle-version="3.1.7"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Vendor: Gabriele Carcassi <carcassi@bnl.gov>, Kunal Shroff <kshroff@bnl.gov> - BNL
 Bundle-Description: Provides a view to check what channels are opened on which DataSource
 Export-Package: org.csstudio.utility.pvmanager.ui.toolbox

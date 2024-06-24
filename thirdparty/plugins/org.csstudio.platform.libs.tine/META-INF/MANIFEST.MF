@@ -44,4 +44,4 @@ Bundle-ClassPath: .,
  libs/tine.jar,
  libs/acop.jar
 Bundle-Vendor: Desy <css-developer@desy.de>, Helge Rickens
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21

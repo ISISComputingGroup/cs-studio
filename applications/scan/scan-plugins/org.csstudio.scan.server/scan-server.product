@@ -9,7 +9,7 @@
    <launcherArgs>
       <programArgs>--launcher.suppressErrors
       </programArgs>
-      <vmArgs>-Dosgi.requiredJavaVersion=1.8
+      <vmArgs>-Dosgi.requiredJavaVersion=21
 -Djava.awt.headless=true
 -Xms10m
 -Xmx1024m

@@ -27,6 +27,6 @@ Require-Bundle: org.w3c.dom.svg,
  org.apache.xmlgraphics.batik-codec;bundle-version="[1.13.0,1.14.0)"
 Export-Package: org.csstudio.utility.batik
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Description: Extra utils for apache batik
 Bundle-ClassPath: .

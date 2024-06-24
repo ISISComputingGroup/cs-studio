@@ -23,7 +23,7 @@ Require-Bundle: org.junit;bundle-version="4.8.2",
  org.diirt.util;bundle-version="3.0.1",
  org.diirt.vtype;bundle-version="3.0.1"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Activator: org.csstudio.alarm.beast.ui.alarmtable.Activator
 Export-Package: org.csstudio.alarm.beast.ui.alarmtable
 Import-Package: org.csstudio.java.time

@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views;bundle-version="3.7.0",
  org.csstudio.simplepv,
  org.diirt.vtype;bundle-version="3.0.1"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
 Export-Package: org.csstudio.opibuilder.widgets.detailpanel
 Import-Package: org.csstudio.csdata,

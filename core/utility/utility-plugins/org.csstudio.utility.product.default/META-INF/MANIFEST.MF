@@ -5,4 +5,4 @@ Bundle-SymbolicName: org.csstudio.utility.product.default
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: The CS-Studio collaboration
 Fragment-Host: org.csstudio.utility.product;bundle-version="1.1.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21

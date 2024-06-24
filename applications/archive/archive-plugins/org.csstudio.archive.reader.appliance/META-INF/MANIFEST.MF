@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.core.runtime,
  com.sun.xml.bind.jaxb-impl,
  jaxb-api
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Vendor: Miha Novak <miha.novak@cosylab.com>
 Bundle-ClassPath: .,
  lib/protobuf-java-2.4.1.jar,

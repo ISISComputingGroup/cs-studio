@@ -5,5 +5,5 @@ Fragment-Host: org.csstudio.platform.utility.jms
 Bundle-ManifestVersion: 2
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: The CS-Studio collaboration
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.junit

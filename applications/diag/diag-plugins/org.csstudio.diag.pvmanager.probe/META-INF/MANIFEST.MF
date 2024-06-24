@@ -17,7 +17,7 @@ Require-Bundle: org.eclipse.ui,
  org.csstudio.utility.pvmanager.widgets;bundle-version="3.2.0",
  org.csstudio.java;bundle-version="3.2.0",
  org.diirt.datasource;bundle-version="3.1.7"
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
 Import-Package: org.diirt.datasource.expression;version="3.1.2",
  org.diirt.datasource.formula;version="3.1.2",

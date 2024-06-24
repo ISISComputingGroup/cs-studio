@@ -10,5 +10,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.intro.universal,
  org.eclipse.help
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Vendor: CS-Studio Collaboration <cs-studio-core@lists.sourceforge.net>

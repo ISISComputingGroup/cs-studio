@@ -85,7 +85,7 @@ public class OPIRunnerPerspective implements IPerspectiveFactory
         "org.eclipse.ui.console.ConsoleView";//$NON-NLS-1$
 
     @SuppressWarnings("deprecation")
-    final static String ID_NAVIGATOR = IPageLayout.ID_RES_NAV;
+    //final static String ID_NAVIGATOR = IPageLayout.ID_RES_NAV;
 
     @Override
     public void createInitialLayout(final IPageLayout layout)
@@ -157,8 +157,8 @@ public class OPIRunnerPerspective implements IPerspectiveFactory
 
         bottom.addPlaceholder(ID_CONSOLE_VIEW);
         layout.addShowViewShortcut(ID_CONSOLE_VIEW);
-        left.addPlaceholder(ID_NAVIGATOR);
-        layout.addShowViewShortcut(ID_NAVIGATOR);
+        //left.addPlaceholder(ID_NAVIGATOR);
+        //layout.addShowViewShortcut(ID_NAVIGATOR);
 
     }
 

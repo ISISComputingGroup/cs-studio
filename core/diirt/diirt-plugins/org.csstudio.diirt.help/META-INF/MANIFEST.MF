@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Diirt Help
 Bundle-SymbolicName: org.csstudio.diirt.help;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.ui,
  org.eclipse.help.ui;bundle-version="4.0.100",

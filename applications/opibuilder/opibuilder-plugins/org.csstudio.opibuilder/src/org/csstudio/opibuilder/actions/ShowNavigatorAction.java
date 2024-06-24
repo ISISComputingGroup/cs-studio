@@ -35,7 +35,8 @@ public class ShowNavigatorAction implements IObjectActionDelegate {
             if(window == null)
                 window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
             final IWorkbenchPage page = window.getActivePage();
-            page.showView(IPageLayout.ID_RES_NAV);
+            //page.showView(IPageLayout.ID_RES_NAV);
+			page.showView(IPageLayout.ID_PROP_SHEET);
         } catch (WorkbenchException e) {
             final String message = NLS.bind(
                     "Failed to open navigator. \n{0}", e.getMessage());

@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.ui;resolution:=optional,
  org.csstudio.csdata;bundle-version="3.2.0",
  org.diirt.datasource
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: org.csstudio.utility.pvmanager.widgets
 Bundle-Vendor: Gabriele Carcassi <carcassi@bnl.gov>, Kunal Shroff <kshroff@bnl.gov> - BNL
 Import-Package: org.diirt.datasource.expression;version="3.0.0",

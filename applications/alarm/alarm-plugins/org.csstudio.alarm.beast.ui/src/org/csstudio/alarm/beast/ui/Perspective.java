@@ -40,14 +40,14 @@ public class Perspective implements IPerspectiveFactory
 
 
         // Stuff for 'left'
-        left.addPlaceholder(IPageLayout.ID_RES_NAV);
+        //left.addPlaceholder(IPageLayout.ID_RES_NAV);
         left.addPlaceholder(IPageLayout.ID_PROP_SHEET);
 
         // Stuff for 'bottom'
         bottom.addPlaceholder(ID_CONSOLE_VIEW);
 
         // Populate the "Window/Views..." menu with suggested views
-        layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
+        //layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
         layout.addShowViewShortcut(ID_CONSOLE_VIEW);
     }
 }

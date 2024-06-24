@@ -20,7 +20,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.csstudio.csdata;bundle-version="3.2.0",
  org.jdom,
  org.eclipse.core.expressions
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
 Export-Package: org.csstudio.opibuilder.widgets,
  org.csstudio.opibuilder.widgets.actions,

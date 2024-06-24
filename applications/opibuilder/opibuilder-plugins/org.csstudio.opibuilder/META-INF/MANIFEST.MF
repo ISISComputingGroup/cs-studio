@@ -57,4 +57,4 @@ Export-Package: org.csstudio.opibuilder,
 Bundle-ClassPath: patch.jar,
  lib/rhino/js.jar,
  .
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-21
