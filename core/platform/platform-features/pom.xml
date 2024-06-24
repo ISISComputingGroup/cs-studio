@@ -16,7 +16,7 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.eclipse.tycho.extras</groupId>
+        <!--groupId>org.eclipse.tycho.extras</groupId>
         <artifactId>tycho-source-feature-plugin</artifactId>
         <version>${tycho-extras.version}</version>
         <executions>
@@ -32,7 +32,24 @@
               </excludes>
             </configuration>
           </execution>
-        </executions>
+        </executions-->
+		<groupId>org.eclipse.tycho</groupId>
+		<artifactId>tycho-source-plugin</artifactId>
+		<version>${tycho.version}</version>
+		<executions>
+			<execution>
+				<id>plugin-source</id>
+				<goals>
+					<goal>plugin-source</goal>
+				</goals>
+			</execution>
+			<execution>
+				<id>feature-source</id>
+				<goals>
+					<goal>feature-source</goal>
+				</goals>
+			</execution>
+		</executions>
       </plugin>
       <plugin>
         <!-- Plugin required to properly publish source feature -->
