@@ -21,7 +21,8 @@
 -Dosgi.configuration.cascaded=true
 -Dosgi.sharedConfiguration.area.readOnly=true
 -Dosgi.install.area.readOnly=true
--Dosgi.requiredJavaVersion=11
+-Dosgi.requiredJavaVersion=17
+-Djdk.util.zip.disableZip64ExtraFieldValidation=true
 -Dorg.osgi.framework.bundle.parent=ext
 -Dosgi.framework.extensions=org.eclipse.fx.osgi
 -Defxclipse.osgi.hook.debug=false

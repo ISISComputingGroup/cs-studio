@@ -19,14 +19,14 @@
 
   <!-- USE MAVEN 3.0 -->
   <prerequisites>
-    <maven>3.0</maven>
+    <maven>3.9</maven>
   </prerequisites>
 
 
   <!-- PROPERTIES -->
   <properties>
     <!-- VERSIONS -->
-    <tycho.version>1.7.0</tycho.version>
+    <tycho.version>2.7.5</tycho.version>
     <tycho-extras.version>${tycho.version}</tycho-extras.version>
 
     <cs-studio.version>4.6</cs-studio.version>
