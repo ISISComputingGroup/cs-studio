@@ -43,7 +43,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalViewer;
-import org.eclipse.draw2d.zoom.ZoomListener;
+import org.eclipse.gef.editparts.ZoomListener;
 import org.eclipse.ui.IActionFilter;
 
 /**The Editpart Controller for a linking Container

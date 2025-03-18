@@ -14,7 +14,7 @@ import org.csstudio.opibuilder.editparts.ExecutionMode;
 import org.csstudio.opibuilder.editparts.IPVWidgetEditpart;
 import org.csstudio.swt.widgets.figures.ITextFigure;
 import org.eclipse.draw2d.AbstractBackground;
-import org.eclipse.draw2d.zoom.ZoomListener;
+import org.eclipse.gef.editparts.ZoomListener;
 import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
