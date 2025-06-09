@@ -9,12 +9,31 @@ package org.csstudio.alarm.beast.client;
 
 import java.io.PrintWriter;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 
+import org.csstudio.alarm.beast.Activator;
 import org.csstudio.alarm.beast.Messages;
 import org.csstudio.alarm.beast.SeverityLevel;
 import org.csstudio.alarm.beast.XMLTags;
 import org.csstudio.apputil.xml.XMLWriter;
 import org.eclipse.osgi.util.NLS;
+
+import org.diirt.datasource.PVManager;
+import org.diirt.datasource.PVReader;
+import org.diirt.datasource.PVReaderEvent;
+import org.diirt.datasource.PVReaderListener;
+import org.diirt.datasource.ExpressionLanguage;
+import org.diirt.vtype.VType;
+import org.diirt.vtype.VNumber;
+import java.time.Duration;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 
 /** Leaf item in the alarm configuration tree which refers to a PV,
  *  tracking the current and alarm state, value, timestamp info
@@ -24,6 +43,7 @@ import org.eclipse.osgi.util.NLS;
 public class AlarmTreePV extends AlarmTreeLeaf
 {
     private static final long serialVersionUID = 5262966990320748429L;
+	private static final String SEPARATOR = "  |  ";
     private volatile boolean enabled = true;
     private volatile boolean latching = true;
     private volatile boolean annunciating = false;
@@ -39,7 +59,94 @@ public class AlarmTreePV extends AlarmTreeLeaf
     private volatile String current_message = SeverityLevel.OK.getDisplayName();
 
     private volatile String value = null;
+	
+    /**
+     * Thread pool for Alarms limit PV info.
+     */
+    private static final ExecutorService PVINFO_THREADPOOL = Executors.newCachedThreadPool();
+    
+	/**
+	 * Thread-safe PV reader for the limit PVs. For each interesting PV limit an
+	 * instance is created and a thread initiated for the listener.
+	 */
+	private static class PV {
+		/** Name of the PV' */
+		final String pvName;
+		
+		/** PV reader for this PV */
+        PVReader<VType> reader;
+        
+        /** Value of the PV, updated by the listener */
+        volatile String pvValue = Messages.Unknown;
+        
+        /** Listener for the PV reader. It attaches to the PV Manager to update the reader */
+        private PVReaderListener<VType> listener;
+        
+        /** Constructor for PV */
+        PV(String pvName) {	
+            this.pvName = pvName;
 
+            Future<?> result = PVINFO_THREADPOOL.submit(new Runnable() {
+    			@Override
+    			public void run() {
+    				// Set the thread name for easier debugging. Not using custom factory because 
+    				// there is no easy way to set the PV name in a custom factory (eg allows thread count).
+    				Thread.currentThread().setName(String.format("AlarmTreePV_PVInfo-%s", pvName));
+    				listener = new PVReaderListener<VType>() {
+    					@Override
+    					public synchronized void pvChanged(PVReaderEvent<VType> evt) {
+    						try {
+    							if (evt.isExceptionChanged()) {
+    								pvValue = Messages.Unknown;
+    							}
+    							if (reader != null) {
+    								boolean isConnected = reader.isConnected();
+        							if (evt.isConnectionChanged() && !isConnected) {
+        								pvValue = Messages.Unknown;
+        							}
+        							if (evt.isValueChanged() && isConnected) {
+        					        	var value = reader.getValue();
+        					            if (value instanceof VNumber) {
+        					                pvValue = ((VNumber) value).getValue().toString();
+        					                Activator.getLogger().log(Level.INFO, "PV Value: " + pvValue);
+        					            } else {
+        					            	pvValue = value.toString();
+        					            	Activator.getLogger().log(Level.INFO, "PV Value (Not numeric): " + pvValue);
+        					            }
+        							}
+    							}
+    						} catch (RuntimeException e) {
+								Activator.getLogger().log(Level.SEVERE, "Error reading PV: " + pvName, e);
+							}
+    					}
+    			    };
+    			    
+    			    reader = PVManager
+    						.read(ExpressionLanguage.channel(pvName, VType.class, VType.class))
+    						.readListener(listener)
+    						.notifyOn(PVINFO_THREADPOOL)
+    		                .maxRate(Duration.ofMillis(100));
+    			}
+    		});
+    		
+    		try {
+    			result.get();
+    		} catch (Exception e) {
+    		    Activator.getLogger().log(Level.SEVERE, "Error setting up PV: " + pvName, e);
+    		}
+        }
+
+        /** Get the value of this PV */
+        String getValue() {
+            return pvValue;
+        }
+    }
+
+	/**
+	 * Store for limit PVs for LOW, LOLO, HIGH, HIHI.
+	 */
+	private final Map<String, PV> limits = new LinkedHashMap<>();
+    
     /** Initialize
      *  @param parent Parent component in hierarchy
      *  @param name PV name
@@ -49,6 +156,7 @@ public class AlarmTreePV extends AlarmTreeLeaf
             final String name, final int id)
     {
         super(parent, name, id);
+		setLimitDetailsPV();
     }
 
     /** {@inheritDoc} */
@@ -73,7 +181,7 @@ public class AlarmTreePV extends AlarmTreeLeaf
                 getDelay(),
                 getCurrentSeverity().getDisplayName(),
                 getCurrentMessage()
-            });
+            }) + "\n" + getLimitDetails();
     }
 
     /** @return Current severity */
@@ -287,4 +395,33 @@ public class AlarmTreePV extends AlarmTreeLeaf
                     getCurrentMessage()
                 });
     }
+
+    /**
+     * Get the details of the LOW/HIGH etc limits set for this PV. 
+     * @return
+     */
+	private String getLimitDetails() {
+		final StringBuilder limitDetails = new StringBuilder();
+		limits.forEach((key, pv) -> {
+			limitDetails.append(key).append(": ").append(pv.getValue()).append(SEPARATOR);
+		});
+		return limitDetails.toString().trim();
+	}
+
+	/**
+	 * Set up the limit PVs for LOW, LOLO, HIGH, HIHI.
+	 */
+	private void setLimitDetailsPV() {
+		final List<String> keys = Arrays.asList("LOLO", "LOW", "HIGH", "HIHI");
+		try {
+			keys.stream().forEach(k -> {
+				PV pv = limits.get(k);
+				if (pv == null) {
+					limits.put(k, new PV(getName() + "." + k));
+				}
+			});
+		} catch (Exception e) {
+			Activator.getLogger().log(Level.SEVERE, "Error setting limit PVs for " + getName() + ": ", e);
+		}
+	}
 }

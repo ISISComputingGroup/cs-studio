@@ -9,6 +9,7 @@ Bundle-Description: BEAST library: Alarm model, ...
 Require-Bundle: org.junit;bundle-version="4.8.2",
  org.eclipse.core.runtime,
  org.eclipse.help,
+ org.diirt.datasource;bundle-version="3.1.2",
  org.csstudio.csdata;bundle-version="3.0.0",
  org.csstudio.apputil;bundle-version="1.1.2",
  org.csstudio.platform.utility.jms;bundle-version="1.1.3",
