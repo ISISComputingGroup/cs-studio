@@ -33,6 +33,7 @@ import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 
 /** Leaf item in the alarm configuration tree which refers to a PV,
@@ -63,7 +64,8 @@ public class AlarmTreePV extends AlarmTreeLeaf
     /**
      * Thread pool for Alarms limit PV info.
      */
-    private static final ExecutorService PVINFO_THREADPOOL = Executors.newCachedThreadPool();
+    private static final ExecutorService PVINFO_THREADPOOL = Executors.newCachedThreadPool(
+    		new BasicThreadFactory.Builder().namingPattern("AlarmTreePV_LimitsInfo-threadpool-%d").build());
     
 	/**
 	 * Thread-safe PV reader for the limit PVs. For each interesting PV limit an
@@ -89,9 +91,6 @@ public class AlarmTreePV extends AlarmTreeLeaf
             Future<?> result = PVINFO_THREADPOOL.submit(new Runnable() {
     			@Override
     			public void run() {
-    				// Set the thread name for easier debugging. Not using custom factory because 
-    				// there is no easy way to set the PV name in a custom factory (eg allows thread count).
-    				Thread.currentThread().setName(String.format("AlarmTreePV_PVInfo-%s", pvName));
     				listener = new PVReaderListener<VType>() {
     					@Override
     					public synchronized void pvChanged(PVReaderEvent<VType> evt) {
