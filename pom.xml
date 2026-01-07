@@ -26,7 +26,7 @@
   <!-- PROPERTIES -->
   <properties>
     <!-- VERSIONS -->
-    <tycho.version>2.7.5</tycho.version>
+    <tycho.version>3.0.5</tycho.version>
     <tycho-extras.version>${tycho.version}</tycho-extras.version>
 
     <cs-studio.version>4.6</cs-studio.version>
@@ -66,6 +66,16 @@
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
       <releases>
         <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>isis-css-top-repo</id>
+      <url>https://isiscomputinggroup.github.io/isis_css_top</url>
+      <releases>
+        <enabled>true</enabled>
       </releases>
       <snapshots>
         <enabled>true</enabled>
