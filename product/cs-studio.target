@@ -33,7 +33,7 @@
 <unit id="org.csstudio.pvmanager.exec.feature.feature.group" version="3.3.0.201406280236"/>
 <unit id="org.csstudio.utility.pvmanager" version="3.3.0.20140701151511"/>
 <unit id="org.antlr.runtime" version="3.4.0"/>
-<unit id="org.epics.pvaccess" version="3.0.5"/>
+<unit id="org.epics.epics-pvaccess" version="5.1.10"/>
 <unit id="slf4j.api" version="1.7.2"/>
 <unit id="org.epics.graphene.source" version="0.7.0"/>
 <unit id="org.epics.pvmanager-graphene.source" version="2.6.0"/>
@@ -71,7 +71,7 @@
 <unit id="org.csstudio.utility.pvmanager.epics" version="3.3.0.20140701151512"/>
 <unit id="org.mockito.mockito-core" version="1.9.5"/>
 <unit id="org.csstudio.pvmanager.extra.feature.feature.group" version="3.3.0.201406280237"/>
-<unit id="org.epics.pvaccess.source" version="3.0.5"/>
+<unit id="org.epics.epics-pvaccess.source" version="5.1.10"/>
 <unit id="org.csstudio.utility.pvmanager.vtype" version="3.3.0.20140701151513"/>
 <unit id="org.csstudio.platform.libs.epics" version="3.3.0.20140701151516"/>
 <unit id="org.epics.vtype.source" version="2.6.0"/>

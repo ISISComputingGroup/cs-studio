@@ -94,7 +94,7 @@
                   <source>true</source>
                 </artifact>
                 <artifact>
-                  <id>org.epics:epics-pvaccess:5.1.2</id>
+                  <id>org.epics:epics-pvaccess:5.1.10.isis1</id>
                   <source>true</source>
                 </artifact>
                 <artifact>
