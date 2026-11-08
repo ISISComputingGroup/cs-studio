@@ -50,6 +50,13 @@
               </sources>
             </configuration>
           </execution>
+          <execution>
+            <id>set-osgi-version</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>parse-version</goal>
+            </goals>
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -69,20 +76,6 @@
               <includeArtifactIds>pvmanager-core</includeArtifactIds>
               <outputDirectory>${project.build.directory}/sources</outputDirectory>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.5</version>
-        <executions>
-          <execution>
-            <id>set-osgi-version</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>parse-version</goal>
-            </goals>
           </execution>
         </executions>
       </plugin>
